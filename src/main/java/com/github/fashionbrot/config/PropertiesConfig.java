@@ -4,7 +4,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("quick.properties")
+@PropertySource(value = {"classpath:dataType.properties","classpath:vm.properties"})
 public class PropertiesConfig {
 
 }

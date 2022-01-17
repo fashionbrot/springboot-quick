@@ -1,0 +1,30 @@
+package ${package}.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+#if ($dtoStatus==true)
+import ${package}.dto.${className}Dto;
+#end
+import ${package}.entity.${className}Entity;
+import ${package}.req.${className}Req;
+import ${package}.vo.PageVo;
+import ${package}.service.BaseService;
+import ${package}.req.${className}Req;
+
+import java.util.List;
+import java.util.Map;
+import java.io.Serializable;
+import java.util.Collection;
+
+/**
+ * ${commentsEntity}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${date}
+ */
+public interface ${className}Service  extends IService<${className}Entity>{
+
+    Object pageReq(${className}Req req);
+
+}

@@ -20,8 +20,7 @@
         margin: 0px auto;
     }
     .headDiv{
-        background-color: #fff
-
+        background-color: #fff;
         height: 260px;
         border-radius: 6px;
         box-shadow: 1px 1px 3px rgb(0 0 0 / 20%);
@@ -37,6 +36,9 @@
     .input500 input{
         width: 500px;
     }
+    .input430 input{
+        width: 427px;
+    }
     .input300 input{
         width: 300px;
     }
@@ -51,24 +53,37 @@
 
         <form id="formDiv">
             <div style="width: 50%;float:left;height: 250px;">
-                <div class="package input500">
-                    <label >输出地址：</label><input id="out" name="out" type="text"   placeholder="请输入输出地址" value="com" data-toggle="tooltip"  data-placement="top" title="请输入输出地址"  />
+                <div class="package input430">
+                    <label >输出地址：</label>
+                    <input id="out" name="out" type="text" placeholder="请输入输出地址" value="com" data-toggle="tooltip"  data-placement="top" title="请输入输出地址"  />
+                    <button type="button" class="btn btn-sm btn-default" id="cacheButton" >一键缓存 </button>
                 </div>
                 <div class="package input500">
-                    <label >controller：</label><input id="controllerOut" name="controllerOut" type="text"   placeholder="请输入controller地址"  data-toggle="tooltip"  data-placement="top" title="controller 输出地址"  value="controller" />
+                    <label >controller：</label>
+                    <input id="controllerOut" name="controllerOut" type="text"   placeholder="请输入controller地址"  data-toggle="tooltip"  data-placement="top" title="controller 输出地址"  value="controller" />
+                    <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
                 <div class="package input500">
-                    <label >service：</label ><input id="serviceOut" name="serviceOut" type="text"   placeholder="请输入 service地址"  title="service 输出地址" value="service" />
+                    <label >service：</label >
+                    <input id="serviceOut" name="serviceOut" type="text"   placeholder="请输入 service地址"  title="service 输出地址" value="service" />
+                    <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
                 <div class="package input500">
-                    <label >entity：</label ><input id="entityOut" name="entityOut" type="text"   placeholder="请输入 entity 地址" title="entity 输出地址" value="entity" />
+                    <label >entity：</label >
+                    <input id="entityOut" name="entityOut" type="text"   placeholder="请输入 entity 地址" title="entity 输出地址" value="entity" />
+                    <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
                 <div class="package input500">
-                    <label >mapper：</label ><input id="mapperOut" name="mapperOut" type="text"   placeholder="请输入 mapper地址"  title="mapper 输出地址" value="mapper" />
+                    <label >mapper：</label >
+                    <input id="mapperOut" name="mapperOut" type="text"   placeholder="请输入 mapper地址"  title="mapper 输出地址" value="mapper" />
+                    <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
                 <div class="package input500">
-                    <label >mapperXml：</label ><input id="mapperXmlOut" name="mapperXmlOut" type="text"   placeholder="请输入 mapper/xml地址"  title="mapper/xml 输出地址" value="xml"  />
+                    <label >mapperXml：</label >
+                    <input id="mapperXmlOut" name="mapperXmlOut" type="text"   placeholder="请输入 mapper/xml地址"  title="mapper/xml 输出地址" value="xml"  />
+                    <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
+
             </div>
             <div style="width: 50%;float:right;height: 250px;">
                 <div class="package input300">
@@ -82,11 +97,12 @@
                 </div>
                 <div class="package ">
                     <label >配置项：</label>
-                    swagger：  <input type="checkbox" checked="true"  id="swaggerStatus" name="swaggerStatus"  />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    Dto：   <input type="checkbox"   id="dtoStatus" name="dtoStatus"   />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-sm btn-primary" id="generate" onclick="generate()"
-                            data-complete-text="生成代码中...">生成代码
-                    </button>
+                    swagger:<input type="checkbox" checked="true"  id="swaggerStatus" name="swaggerStatus"  />&nbsp;&nbsp;
+                    Dto:<input type="checkbox"   id="dtoStatus" name="dtoStatus"   />&nbsp;&nbsp;
+                </div>
+                <div class="package ">
+                    <label ></label>
+                    <button type="button" class="btn btn-sm btn-primary" id="generate" onclick="generateCode()" data-complete-text="生成代码">生成代码</button>
                 </div>
                 <div class="package ">
                     <label >表名：</label><input type="text" placeholder="表名" id="tableName" >
@@ -133,19 +149,11 @@
     $(function () {
         loadData();
     })
-    var outKey = "quick-out-key"
-    var author  = "quick-out-author"
+    var keyPrefix = "quick-out-";
     $(function() {
         $("#searchButton").click(function(){
             loadData();
         });
-        $("#clearButton").on("click",function () {
-            $(".searchDiv  input").each(function(){
-                $(this).val('');
-                loadData();
-            });
-        });
-
 
         $("#all").click(function(){
             if(this.checked){
@@ -155,40 +163,31 @@
             }
         });
 
-        $("#out").bind('input propertychange', function () {
-            localStorage.setItem(outKey,this.value);
-            zhui(this.value);
-        });
-
-
-        loadStorage("author");
-        loadStorage("email");
-
-
-
-        var outValue = localStorage.getItem(outKey);
-        console.log(outValue)
-        if (!isEmpty(outValue)){
-            $("#out").val(outValue);
-            zhui(outValue);
-        }else{
-            zhui($("#out").val());
-        }
-
-        loadStorage("controllerOut");
-        loadStorage("serviceOut");
+        initItemAll();
     });
 
-    function loadStorage(id ) {
-        var idd = "quick-out-"+id
-        $("#"+id).bind('input propertychange', function () {
-            localStorage.setItem(idd,this.value);
-        });
-        var outValue = localStorage.getItem(idd);
-        if (!isEmpty(outValue)){
-            $("#"+id).val(outValue);
+    $("#out").bind('input propertychange', function () {
+        pathChange(this.value);
+    });
+
+
+    function pathChange(value) {
+        if (value.endWith("\\")){
+            value = value.substring(0,value.length-1);
         }
+        $("#controllerOut").val(value+"\\controller")
+        $("#serviceOut").val(value+"\\service")
+        $("#entityOut").val(value+"\\entity")
+        $("#mapperOut").val(value+"\\mapper")
+        $("#mapperXmlOut").val(value+"\\mapper\\xml")
     }
+
+    $("#clearButton").on("click",function () {
+        $("#tableName").val('');
+        loadData();
+    });
+
+
 
     function isEmpty(outValue) {
         if (outValue!=null && outValue!='' && outValue!='undefined' && outValue!=undefined){
@@ -197,21 +196,20 @@
         return true;
     }
 
-    function zhui(value) {
-        if (value.endWith("\\")){
-            value = value.substring(0,value.length-1);
-        }
-
-
-        $("#controllerOut").val(value+"\\controller")
-        $("#serviceOut").val(value+"\\service")
-        $("#entityOut").val(value+"\\entity")
-        $("#mapperOut").val(value+"\\mapper")
-        $("#mapperXmlOut").val(value+"\\mapper\\xml")
+    function initItemAll() {
+        initItem("out");
+        initItem("controllerOut");
+        initItem("serviceOut");
+        initItem("entityOut");
+        initItem("mapperOut");
+        initItem("mapperXmlOut");
+        initItem("author");
+        initItem("email");
     }
 
-
-
+    function initItem(id) {
+        $("#"+id).val(localStorage.getItem(keyPrefix+id))
+    }
 
     function loadData(){
         $.ajax({
@@ -223,6 +221,9 @@
                 $("#searchButton").button('loading');
             },
             complete: function(){
+                $("#searchButton").button('complete');
+            },
+            error:function(){
                 $("#searchButton").button('complete');
             },
             success: function (data) {
@@ -240,38 +241,48 @@
                                 h+="<td>";
                                     h+=i+1;
                                 h+="</td>";
-
                                 h+="<td>";
                                     h+=li.tableName;
                                 h+="</td>";
-
                                 h+="<td>";
                                     h+=li.engine
                                 h+="</td>";
-
                                 h+="<td>";
                                     h+=li.comments
                                 h+="</td>";
-
                                 h+="<td>";
                                     h+=li.createTime
                                 h+="</td>";
-
-
                             h+="</tr>";
                         }
                         $("#tableBody").html(h);
                     }
+                }else{
+                    alert(data.msg);
                 }
             }
         });
     }
 
-    function generate() {
+    function generateCode() {
+
+        var obj = document.getElementsByName("checboxName");
+        var check_val = [];
+        for (k in obj) {
+            if (obj[k].checked) {
+                check_val.push(obj[k].value);
+            }
+        }
+        if (check_val.length<=0){
+            alert("请选择以下表")
+            return false;
+        }
+
+
         $.ajax({
             url: ctx+"generate",
             type: "post",
-            data: $("#formDiv").serialize(),
+            data: $("#formDiv").serialize()+"&generateTableNames="+check_val.join(","),
             dataType: "json",
             beforeSend: function(){
                 $("#generate").button('loading');
@@ -279,17 +290,47 @@
             complete: function(){
                 $("#generate").button('complete');
             },
+            error:function(){
+                $("#generate").button('complete');
+            },
             success: function (data) {
-
                 if (data.code==0){
                     alert("生成成功");
+                }else{
+                    alert(data.msg);
                 }
             }
         });
     }
 
 
+    $("#cacheButton").on("click",function () {
+        setItem("out");
+        setItem("controllerOut");
+        setItem("serviceOut");
+        setItem("entityOut");
+        setItem("mapperOut");
+        setItem("mapperXmlOut");
+        setItem("author");
+        setItem("email");
+    });
 
+    function setItem(id){
+        var value = $("#"+id).val();
+        if (!isEmpty(value)){
+            localStorage.setItem(keyPrefix+id,value);
+        }
+    }
+
+    function jinyong(obj){
+        if(!$(obj).prev().attr("disabled")){
+            $(obj).prev().attr("disabled","disabled")
+            $(obj).html("<span style='color:red;'>启用</span>")
+        }else{
+            $(obj).prev().removeAttr("disabled")
+            $(obj).html("禁用")
+        }
+    }
 
     $.fn.serializeJson = function () {
         var o = {};

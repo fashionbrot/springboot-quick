@@ -1,0 +1,39 @@
+package ${package}.dto;
+#if ($swaggerStatus==1)
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+#end
+import java.io.Serializable;
+import java.util.Date;
+import lombok.Data;
+
+#if(${hasBigDecimal})
+import java.math.BigDecimal;
+#end
+
+/**
+ * ${commentsEntity}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${date}
+ */
+@Data
+#if ($swaggerStatus==1)
+@ApiModel(value = "${commentsEntity}")
+#end
+public class ${className}Dto implements Serializable {
+
+
+	#foreach ($column in $columns)
+	#if ($swaggerStatus==1)
+	@ApiModelProperty(value = "$column.comments")
+	#else
+	/**
+	* $column.comments
+	*/
+	#end
+	private $column.attrType $column.variableAttrName;
+
+	#end
+}

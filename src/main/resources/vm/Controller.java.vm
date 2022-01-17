@@ -1,0 +1,133 @@
+package ${package}.controller;
+
+#if ($dtoStatus==true)
+import ${package}.dto.${className}Dto;
+#end
+import ${package}.entity.${className}Entity;
+import ${package}.service.${className}Service;
+import ${package}.req.PageReq;
+import ${package}.req.${className}Req;
+import ${package}.vo.PageVo;
+import ${package}.vo.RespVo;
+import ${package}.annotation.MarsPermission;
+#if ($swaggerStatus==1)
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import com.github.xiaoymin.knife4j.annotations.ApiSort;
+import springfox.documentation.annotations.ApiIgnore;
+#end
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
+import java.util.Arrays;
+import java.util.Collection;
+
+
+/**
+ * ${commentsEntity}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${date}
+ */
+
+@MarsPermission(value="${permissionPrefix}")
+@Controller
+@RequestMapping("${pathName}")
+#if ($swaggerStatus==1)
+@Api(tags="${commentsApi}")
+@ApiSort(${apiSort})
+#end
+public class ${className}Controller  {
+
+    /**
+     * 权限 注解 MarsPermission
+     * 默认接口以下
+     * 分页       ${pathName}/page        权限：${permissionPrefix}:page
+     * 数据列表    ${pathName}/queryList   权限：${permissionPrefix}:queryList
+     * 根据id查询  ${pathName}/selectById  权限：${permissionPrefix}:selectById
+     * 新增       ${pathName}/insert      权限：${permissionPrefix}:insert
+     * 修改       ${pathName}/updateById  权限：${permissionPrefix}:updateById
+     * 根据id删除  ${pathName}/deleteById  权限：${permissionPrefix}:deleteById
+     * 多个id删除  ${pathName}/deleteByIds 权限：${permissionPrefix}:deleteByIds
+     */
+
+
+    @Autowired
+    public ${className}Service service;
+
+
+
+    @MarsPermission(":page")
+    @ApiOperation("分页列表")
+    @GetMapping("/page")
+    @ResponseBody
+    public RespVo pageReq(${className}Req req) {
+        return RespVo.success(service.pageReq(req));
+    }
+
+
+    @MarsPermission(":queryList")
+    @ApiOperation("数据列表")
+    @GetMapping("/queryList")
+    @ResponseBody
+    public RespVo queryList(@RequestParam Map<String, Object> params){
+        return  RespVo.success(service.listByMap(params));
+    }
+
+
+    @MarsPermission(":selectById")
+    @ApiOperation("根据id查询")
+    @PostMapping("/selectById")
+    @ResponseBody
+    public RespVo selectById(Long id){
+        return RespVo.success(service.getById(id));
+    }
+
+    @MarsPermission(":insert")
+    @ApiOperation("新增")
+    @PostMapping("/insert")
+    @ResponseBody
+    public RespVo add(@RequestBody ${className}Entity entity){
+        service.save(entity);
+        return RespVo.success();
+    }
+
+
+    @MarsPermission(":updateById")
+    @ApiOperation("修改")
+    @PostMapping("/updateById")
+    @ResponseBody
+    public RespVo updateById(@RequestBody ${className}Entity entity){
+        service.updateById(entity);
+        return RespVo.success();
+    }
+
+
+    @MarsPermission(":deleteById")
+    @ApiOperation("根据id删除")
+    @PostMapping("/deleteById")
+    @ResponseBody
+    public RespVo deleteById(Long id){
+        service.removeById(id);
+        return RespVo.success();
+    }
+
+
+    @MarsPermission(":deleteByIds")
+    @ApiOperation("批量删除")
+    @PostMapping("/deleteByIds")
+    @ResponseBody
+    public RespVo delete(@RequestBody Long[] ids){
+        service.removeByIds(Arrays.asList(ids));
+        return RespVo.success();
+    }
+
+
+
+}

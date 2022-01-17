@@ -5,31 +5,19 @@ import lombok.Data;
 @Data
 public class CodeReq {
 
-    private String moduleName="example";
+    private String out;
+    private String controllerOut;
+    private String serviceOut;
+    private String entityOut;
+    private String mapperOut;
+    private String mapperXmlOut;
 
-    private String projectName="example";
-
-    private String tables;
-
-    private String packagePath;
-
+    private String  generateTableNames;
     private String excludePrefix;
-
     private String author;
-
-    private String version;
-
     private String email;
+    private String swaggerStatus;
+    private String dtoStatus;
 
-    private int swaggerStatus;
 
-    private String controllerPackage;
-
-    private String commonPackage;
-
-    private String servicePackage;
-
-    private String daoPackage;
-
-    private boolean dtoStatus;
 }
