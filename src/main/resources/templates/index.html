@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>欢迎使用</title>
+    <!-- CSS only -->
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+
+</head>
+<style>
+    body{
+        height: 100%;
+        width: 100%;
+        padding:10px;
+        background-color: #f3f3f4;
+        margin: 0px auto;
+    }
+    .headDiv{
+        background-color: #fff
+
+        height: 260px;
+        border-radius: 6px;
+        box-shadow: 1px 1px 3px rgb(0 0 0 / 20%);
+        width: 100%;
+        padding: 10px;
+    }
+    .bodyDiv{
+        margin-top: 10px;
+    }
+    .package{
+        padding-top:10px;
+    }
+    .input500 input{
+        width: 500px;
+    }
+    .input300 input{
+        width: 300px;
+    }
+    .package label{
+        width: 90px;
+    }
+</style>
+<body>
+<div>
+
+    <div class="headDiv">
+
+        <form id="formDiv">
+            <div style="width: 50%;float:left;height: 250px;">
+                <div class="package input500">
+                    <label >输出地址：</label><input id="out" name="out" type="text"   placeholder="请输入输出地址" value="com" data-toggle="tooltip"  data-placement="top" title="请输入输出地址"  />
+                </div>
+                <div class="package input500">
+                    <label >controller：</label><input id="controllerOut" name="controllerOut" type="text"   placeholder="请输入controller地址"  data-toggle="tooltip"  data-placement="top" title="controller 输出地址"  value="controller" />
+                </div>
+                <div class="package input500">
+                    <label >service：</label ><input id="serviceOut" name="serviceOut" type="text"   placeholder="请输入 service地址"  title="service 输出地址" value="service" />
+                </div>
+                <div class="package input500">
+                    <label >entity：</label ><input id="entityOut" name="entityOut" type="text"   placeholder="请输入 entity 地址" title="entity 输出地址" value="entity" />
+                </div>
+                <div class="package input500">
+                    <label >mapper：</label ><input id="mapperOut" name="mapperOut" type="text"   placeholder="请输入 mapper地址"  title="mapper 输出地址" value="mapper" />
+                </div>
+                <div class="package input500">
+                    <label >mapperXml：</label ><input id="mapperXmlOut" name="mapperXmlOut" type="text"   placeholder="请输入 mapper/xml地址"  title="mapper/xml 输出地址" value="xml"  />
+                </div>
+            </div>
+            <div style="width: 50%;float:right;height: 250px;">
+                <div class="package input300">
+                    <label >剔除前缀：</label><input type="text"  placeholder="剔除前缀" id="excludePrefix" name="excludePrefix" />
+                </div>
+                <div class="package input300">
+                    <label >作者：</label><input id="author" name="author" type="text"  placeholder="请输入注释的作者名称" value="fashionbrot"  />
+                </div>
+                <div class="package input300">
+                    <label >邮箱：</label><input id="email" name="email" type="text"  placeholder="请输入注释的邮箱" value="fashionbrot@163.com" />
+                </div>
+                <div class="package ">
+                    <label >配置项：</label>
+                    swagger：  <input type="checkbox" checked="true"  id="swaggerStatus" name="swaggerStatus"  />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    Dto：   <input type="checkbox"   id="dtoStatus" name="dtoStatus"   />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-sm btn-primary" id="generate" onclick="generate()"
+                            data-complete-text="生成代码中...">生成代码
+                    </button>
+                </div>
+                <div class="package ">
+                    <label >表名：</label><input type="text" placeholder="表名" id="tableName" >
+                    <button type="button" class="btn btn-sm btn-primary" id="searchButton"
+                            data-complete-text="搜索">搜索
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" id="clearButton" >清空 </button>
+                </div>
+
+            </div>
+
+        </form>
+
+
+    </div>
+    <div class="bodyDiv">
+            <table class="table table-bordered table-striped" >
+                <tr>
+                    <td>
+                        <div class=" td-checkbox">
+                            <input type="checkbox" id="all" class="group-checkable" />
+                        </div>
+                    </td>
+                    <th >序号</th>
+                    <th >表名</th>
+                    <th >数据库引擎</th>
+                    <th >表备注</th>
+                    <th >创建时间</th>
+                </tr>
+                <tbody id="tableBody" style="    overflow: scroll;" >
+
+                </tbody>
+            </table>
+
+    </div>
+
+</div>
+</body>
+<script th:inline="javascript">
+    var ctx = [[@{/}]];
+</script>
+<script >
+
+    $(function () {
+        loadData();
+    })
+    var outKey = "quick-out-key"
+    var author  = "quick-out-author"
+    $(function() {
+        $("#searchButton").click(function(){
+            loadData();
+        });
+        $("#clearButton").on("click",function () {
+            $(".searchDiv  input").each(function(){
+                $(this).val('');
+                loadData();
+            });
+        });
+
+
+        $("#all").click(function(){
+            if(this.checked){
+                $("input[name='checboxName']").prop("checked", true);
+            }else{undefined
+                $("input[name='checboxName']").prop("checked", false);
+            }
+        });
+
+        $("#out").bind('input propertychange', function () {
+            localStorage.setItem(outKey,this.value);
+            zhui(this.value);
+        });
+
+
+        loadStorage("author");
+        loadStorage("email");
+
+
+
+        var outValue = localStorage.getItem(outKey);
+        console.log(outValue)
+        if (!isEmpty(outValue)){
+            $("#out").val(outValue);
+            zhui(outValue);
+        }else{
+            zhui($("#out").val());
+        }
+
+        loadStorage("controllerOut");
+        loadStorage("serviceOut");
+    });
+
+    function loadStorage(id ) {
+        var idd = "quick-out-"+id
+        $("#"+id).bind('input propertychange', function () {
+            localStorage.setItem(idd,this.value);
+        });
+        var outValue = localStorage.getItem(idd);
+        if (!isEmpty(outValue)){
+            $("#"+id).val(outValue);
+        }
+    }
+
+    function isEmpty(outValue) {
+        if (outValue!=null && outValue!='' && outValue!='undefined' && outValue!=undefined){
+            return false;
+        }
+        return true;
+    }
+
+    function zhui(value) {
+        if (value.endWith("\\")){
+            value = value.substring(0,value.length-1);
+        }
+
+
+        $("#controllerOut").val(value+"\\controller")
+        $("#serviceOut").val(value+"\\service")
+        $("#entityOut").val(value+"\\entity")
+        $("#mapperOut").val(value+"\\mapper")
+        $("#mapperXmlOut").val(value+"\\mapper\\xml")
+    }
+
+
+
+
+    function loadData(){
+        $.ajax({
+            url: ctx+"list",
+            type: "post",
+            data: {"tableName": $("#tableName").val()},
+            dataType: "json",
+            beforeSend: function(){
+                $("#searchButton").button('loading');
+            },
+            complete: function(){
+                $("#searchButton").button('complete');
+            },
+            success: function (data) {
+
+                if (data.code==0){
+                    var rows = data.data.rows;
+                    if (rows){
+                        var h = "";
+                        for(var i=0;i<rows.length;i++){
+                            var li = rows[i];
+                            h+="<tr>";
+                                h+="<td>";
+                                    h+="<input type='checkbox' name='checboxName' value='"+li.tableName+"'>"
+                                h+="</td>";
+                                h+="<td>";
+                                    h+=i+1;
+                                h+="</td>";
+
+                                h+="<td>";
+                                    h+=li.tableName;
+                                h+="</td>";
+
+                                h+="<td>";
+                                    h+=li.engine
+                                h+="</td>";
+
+                                h+="<td>";
+                                    h+=li.comments
+                                h+="</td>";
+
+                                h+="<td>";
+                                    h+=li.createTime
+                                h+="</td>";
+
+
+                            h+="</tr>";
+                        }
+                        $("#tableBody").html(h);
+                    }
+                }
+            }
+        });
+    }
+
+    function generate() {
+        $.ajax({
+            url: ctx+"generate",
+            type: "post",
+            data: $("#formDiv").serialize(),
+            dataType: "json",
+            beforeSend: function(){
+                $("#generate").button('loading');
+            },
+            complete: function(){
+                $("#generate").button('complete');
+            },
+            success: function (data) {
+
+                if (data.code==0){
+                    alert("生成成功");
+                }
+            }
+        });
+    }
+
+
+
+
+    $.fn.serializeJson = function () {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function () {
+            if (o[this.name]) {
+                o[this.name] = o[this.name].concat(",").concat(this.value);
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+
+    String.prototype.endWith = function (endStr) {
+        var d = this.length - endStr.length;
+        return (d >= 0 && this.lastIndexOf(endStr) == d);
+    }
+</script>
+</html>
