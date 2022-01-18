@@ -12,13 +12,48 @@
 
 </head>
 <style>
-    body{
-        height: 100%;
+
+    html,
+    body {
         width: 100%;
-        padding:10px;
-        background-color: #f3f3f4;
+        height: 100%;
         margin: 0px auto;
+        padding:5px;
+        background-color: #f3f3f4;
+        text-align: center;
     }
+
+    .clear:after {
+        content: "";
+        display: block;
+        height: 0;
+        clear: both;
+    }
+    /*float法*/
+
+    .p-left {
+        float: left;
+        width: 80px;
+        height: 34px;
+        line-height: 34px;
+        text-align: right;
+    }
+
+    .p-right {
+        float: right;
+        width: 80px;
+        height: 34px;
+        line-height: 31px;
+        text-align: right;
+    }
+
+    .p-center {
+        margin-left: 80px;
+        margin-right: 80px;
+        height: 34px;
+        line-height: 31px;
+    }
+
     .headDiv{
         background-color: #fff;
         height: 280px;
@@ -32,9 +67,10 @@
     }
     .package{
         padding-top:5px;
+        height: 34px;
     }
     .input500 input{
-        width: 500px;
+        width: 100%;
         font-size: 11px;
         line-height: 1.53;
         border-radius: 2px;
@@ -48,11 +84,13 @@
         border: 1px solid #ddd;
     }
     .input400 input{
-        width: 400px;
+        width: 100%;
         font-size: 11px;
         line-height: 1.53;
         border-radius: 2px;
         border: 1px solid #ddd;
+        margin-left: 90px;
+        margin-right: 50px;
     }
     .input376 input{
         width: 376px;
@@ -77,123 +115,168 @@
         border-radius: 2px;
         border: 1px solid #ddd;
     }
-</style>
-<body>
-<div>
+    .left{
+        width: 40%;
+        background-color: #fff;
+        height: 100%;
+        border-radius: 6px;
+        box-shadow: 1px 1px 3px rgb(0 0 0 / 20%);
+        padding: 5px 5px;
+        float: left;
+    }
+    .right{
+        width: 59%;
+        background-color: #fff;
+        height: 100%;
+        border-radius: 6px;
+        box-shadow: 1px 1px 3px rgb(0 0 0 / 20%);
+        padding: 5px 5px;
+        float: right;
+    }
 
+    .p-center input{
+        height: 30px;
+        width: 100%;
+        border-radius: 3px;
+    }
+
+
+
+</style>
+
+<body>
+
+
+<!--
     <div class="headDiv">
 
-        <form id="formDiv">
-            <div style="width: 50%;float:left;height: 250px;">
-                <div class="package input376">
-                    <label >输出地址：</label>
-                    <input id="out" name="out" type="text" placeholder="请输入输出地址" value="com" data-toggle="tooltip"  data-placement="top" title="请输入输出地址"  />
-                    <button type="button" class="btn  btn-xs btn-default" id="cacheButton" >一键缓存 </button>
-                </div>
-                <div class="package input400">
-                    <label >controller：</label>
-                    <input id="controllerOut" name="controllerOut" type="text"   placeholder="请输入controller地址"  data-toggle="tooltip"  data-placement="top" title="controller 输出地址"  value="controller" />
-                    <button type="button" class="btn btn-xs btn-default" onclick="jinyong(this)"  >禁用</button>
-                </div>
-                <div class="package input400">
-                    <label >service：</label >
-                    <input id="serviceOut" name="serviceOut" type="text"   placeholder="请输入 service地址"  title="service 输出地址" value="service" />
-                    <button type="button" class="btn btn-xs btn-default" onclick="jinyong(this)"  >禁用</button>
-                </div>
-                <div class="package input400">
-                    <label >config：</label>
-                    <input id="reqOut" name="reqOut" type="text" placeholder="配置输出地址" value="com" data-toggle="tooltip"  data-placement="top" title="请输入输出地址"  />
-                    <button type="button" class="btn btn-xs btn-default" onclick="jinyong(this)"  >禁用</button>
-                </div>
-                <div class="package input400">
-                    <label >entity：</label >
-                    <input id="entityOut" name="entityOut" type="text"   placeholder="请输入 entity 地址" title="entity 输出地址" value="entity" />
-                    <button type="button" class="btn btn-xs btn-default" onclick="jinyong(this)"  >禁用</button>
-                </div>
-                <div class="package input400">
-                    <label >mapper：</label >
-                    <input id="mapperOut" name="mapperOut" type="text"   placeholder="请输入 mapper地址"  title="mapper 输出地址" value="mapper" />
-                    <button type="button" class="btn btn-xs btn-default" onclick="jinyong(this)"  >禁用</button>
-                </div>
-                <div class="package input400">
-                    <label >mapperXml：</label >
-                    <input id="mapperXmlOut" name="mapperXmlOut" type="text"   placeholder="请输入 mapper/xml地址"  title="mapper/xml 输出地址" value="xml"  />
-                    <button type="button" class="btn btn-xs btn-default" onclick="jinyong(this)"  >禁用</button>
-                </div>
-                <div class="package input400">
-                    <label >mapperXml：</label >
-                    <input id="mapperXmlOut" name="mapperXmlOut" type="text"   placeholder="请输入 mapper/xml地址"  title="mapper/xml 输出地址" value="xml"  />
-                    <button type="button" class="btn btn-xs btn-default" onclick="jinyong(this)"  >禁用</button>
-                </div>
-                <div class="package input400">
-                    <label >mapperXml：</label >
-                    <input id="mapperXmlOut" name="mapperXmlOut" type="text"   placeholder="请输入 mapper/xml地址"  title="mapper/xml 输出地址" value="xml"  />
-                    <button type="button" class="btn btn-xs btn-default" onclick="jinyong(this)"  >禁用</button>
-                </div>
 
+
+    </div>-->
+
+
+
+    <div class="left">
+        <div style="width: 100%;float:left;height: 100%;">
+            <div class="clear">
+                <div class="p-left">输出地址：</div>
+                <div class="p-right">
+                    <button type="button" class="btn  btn-sm btn-default" id="cacheButton" >一键缓存 </button>
+                </div>
+                <div class="p-center">
+                    <input id="out" name="out" type="text"  placeholder="请输入输出地址" value="com" data-toggle="tooltip"  data-placement="top" title="请输入输出地址"  />
+                </div>
             </div>
-            <!--<div style="width: 35%;float:left;height: 250px;">
-                <div class="package input400">
-                    <label >req：</label>
-                    <input id="reqOut" name="reqOut" type="text" placeholder="请输入输出地址" value="com" data-toggle="tooltip"  data-placement="top" title="请输入输出地址"  />
+
+            <div class="clear">
+                <div class="p-left">controller：</div>
+                <div class="p-right">
                     <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
-            </div>-->
-            <div style="width: 50%;float:right;height: 250px;">
-                <div class="package input300">
-                    <label >剔除前缀：</label><input type="text"  placeholder="剔除前缀" id="excludePrefix" name="excludePrefix" />
+                <div class="p-center">
+                    <input id="controllerOut" name="controllerOut" type="text"   placeholder="请输入controller地址"  data-toggle="tooltip"  data-placement="top" title="controller 输出地址"  value="controller" />
                 </div>
-                <div class="package input300">
-                    <label >作者：</label><input id="author" name="author" type="text"  placeholder="请输入注释的作者名称" value="fashionbrot"  />
+            </div>
+            <div class="clear">
+                <div class="p-left">service：</div>
+                <div class="p-right">
+                    <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
-                <div class="package input300">
-                    <label >邮箱：</label><input id="email" name="email" type="text"  placeholder="请输入注释的邮箱" value="fashionbrot@163.com" />
+                <div class="p-center">
+                    <input id="serviceOut" name="serviceOut" type="text"   placeholder="请输入 service地址"  title="service 输出地址" value="service" />
                 </div>
-                <div class="package ">
+            </div>
+
+            <div class="clear">
+                <div class="p-left">req：</div>
+                <div class="p-right">
+                    <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
+                </div>
+                <div class="p-center">
+                    <input id="reqOut" name="reqOut" type="text" placeholder="配置输出地址" value="com" data-toggle="tooltip"  data-placement="top" title="请输入输出地址"  />
+                </div>
+            </div>
+            <div class="clear">
+                <div class="p-left">entity：</div>
+                <div class="p-right">
+                    <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
+                </div>
+                <div class="p-center">
+                    <input id="entityOut" name="entityOut" type="text"   placeholder="请输入 entity 地址" title="entity 输出地址" value="entity" />
+                </div>
+            </div>
+
+            <div class="clear">
+                <div class="p-left">mapper：</div>
+                <div class="p-right">
+                    <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
+                </div>
+                <div class="p-center">
+                    <input id="mapperOut" name="mapperOut" type="text"   placeholder="请输入 mapper地址"  title="mapper 输出地址" value="mapper" />
+                </div>
+            </div>
+            <div class="clear">
+                <div class="p-left">mapperXml：</div>
+                <div class="p-right">
+                    <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
+                </div>
+                <div class="p-center">
+                    <input id="mapperXmlOut" name="mapperXmlOut" type="text"   placeholder="请输入 mapper/xml地址"  title="mapper/xml 输出地址" value="xml"  />
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+    <div class="right" style="overflow: auto" >
+        <form id="formDiv">
+
+            <div style="width: 100%;float:right;">
+                <div style="float: left;display: inline;width: 100%;text-align: left;padding: 3px;">
+                    <label >剔除前缀：</label><input type="text" style="width: 100px;" placeholder="剔除前缀" id="excludePrefix" name="excludePrefix" />
+                    <label >作者：</label><input id="author" name="author" type="text" style="width: 100px;"  placeholder="请输入注释的作者名称" value="fashionbrot"  />
+                    <label >邮箱：</label><input id="email" name="email"   type="text"  placeholder="请输入注释的邮箱" value="fashionbrot@163.com" />
+                </div>
+                <div style="float: left;display: inline;width: 100%;text-align: left;padding: 3px;">
                     <label >配置项：</label>
                     swagger:<input type="checkbox" checked="true"  id="swaggerStatus" name="swaggerStatus"  />&nbsp;&nbsp;
                     Dto:<input type="checkbox"   id="dtoStatus" name="dtoStatus"   />&nbsp;&nbsp;
+                    <button type="button" class="btn btn-sm btn-primary" id="generate" onclick="generateCode()" data-complete-text="生成代码">生成代码</button>
+
                 </div>
-                <div class="package ">
-                    <label ></label>
-                    <button type="button" class="btn btn-xs btn-primary" id="generate" onclick="generateCode()" data-complete-text="生成代码">生成代码</button>
-                </div>
-                <div class="package ">
-                    <label >表名：</label><input type="text" class="input1" placeholder="表名" id="tableName" >
-                    <button type="button" class="btn btn-xs btn-primary" id="searchButton"
+                <div style="float: left;display: inline;width: 100%;text-align: left;padding: 3px;">
+                    <label >表名：</label><input type="text"  placeholder="表名" id="tableName" >
+                    <button type="button" class="btn btn-sm btn-primary" id="searchButton"
                             data-complete-text="搜索">搜索
                     </button>
-                    <button type="button" class="btn btn-xs btn-primary" id="clearButton" >清空 </button>
+                    <button type="button" class="btn btn-sm btn-primary" id="clearButton" >清空 </button>
                 </div>
 
             </div>
-
         </form>
-
-
-    </div>
-    <div class="bodyDiv">
-            <table class="table table-bordered table-striped" >
+        <table class="table table-bordered table-striped" >
+            <thead>
                 <tr>
                     <td>
                         <div class=" td-checkbox">
                             <input type="checkbox" id="all" class="group-checkable" />
                         </div>
                     </td>
-                    <th >序号</th>
-                    <th >表名</th>
-                    <th >数据库引擎</th>
-                    <th >表备注</th>
-                    <th >创建时间</th>
+                    <th style="text-align: center">序号</th>
+                    <th style="text-align: center">表名</th>
+                    <!--<th >数据库引擎</th>-->
+                    <th style="text-align: center">表备注</th>
+                    <th style="text-align: center">创建时间</th>
                 </tr>
-                <tbody id="tableBody" style="    overflow: scroll;" >
+            </thead>
+            <tbody id="tableBody" >
 
-                </tbody>
-            </table>
+            </tbody>
+        </table>
 
     </div>
 
-</div>
 </body>
 <script th:inline="javascript">
     var ctx = [[@{/}]];
@@ -298,9 +381,9 @@
                                 h+="<td>";
                                     h+=li.tableName;
                                 h+="</td>";
-                                h+="<td>";
-                                    h+=li.engine
-                                h+="</td>";
+                                // h+="<td>";
+                                //     h+=li.engine
+                                // h+="</td>";
                                 h+="<td>";
                                     h+=li.comments
                                 h+="</td>";
@@ -377,11 +460,13 @@
     }
 
     function jinyong(obj){
-        if(!$(obj).prev().attr("disabled")){
-            $(obj).prev().attr("disabled","disabled")
+        var dis = $(obj).parent().parent().find(".p-center input")[0];
+        console.log($(dis))
+        if(!$(dis).attr("disabled")){
+            $(dis).attr("disabled","disabled")
             $(obj).html("<span style='color:#07c160;'>启用</span>")
         }else{
-            $(obj).prev().removeAttr("disabled")
+            $(dis).removeAttr("disabled")
             $(obj).html("禁用")
         }
     }
