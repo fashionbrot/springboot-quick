@@ -326,6 +326,7 @@ public class QuickService {
         return context;
     }
 
+
     private void setDataType(TableEntity tableEntity, boolean hasBigDecimal, List<ColumnEntity> columns) {
         for(ColumnEntity columnEntity: columns){
             //列名转换成Java属性名
