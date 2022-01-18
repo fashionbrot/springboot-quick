@@ -317,7 +317,8 @@ public class QuickService {
         }
         SimpleDateFormat sf=new SimpleDateFormat(DateUtil.DATE_FORMAT_SECOND);
 
-        map.put("datetime", sf.format(new Date()));
+        map.put("datetime", DateUtil.formatDate(new Date()));
+        map.put("date", DateUtil.formatDate(DateUtil.DATE_FORMAT_DAY_FORMATTER,new Date()));
         map.put("projectName","example");
 //        map.put("package2",map.get("package").toString().replace(".","/"));
         VelocityContext context = new VelocityContext(map);

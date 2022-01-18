@@ -47,6 +47,20 @@
         border-radius: 2px;
         border: 1px solid #ddd;
     }
+    .input400 input{
+        width: 400px;
+        font-size: 12px;
+        line-height: 2.0;
+        border-radius: 2px;
+        border: 1px solid #ddd;
+    }
+    .input350 input{
+        width: 350px;
+        font-size: 12px;
+        line-height: 2.0;
+        border-radius: 2px;
+        border: 1px solid #ddd;
+    }
     .input300 input{
         width: 300px;
         font-size: 12px;
@@ -55,7 +69,7 @@
         border: 1px solid #ddd;
     }
     .package label{
-        width: 90px;
+        width: 80px;
     }
 
 </style>
@@ -65,40 +79,47 @@
     <div class="headDiv">
 
         <form id="formDiv">
-            <div style="width: 50%;float:left;height: 250px;">
-                <div class="package input430">
+            <div style="width: 35%;float:left;height: 250px;">
+                <div class="package input350">
                     <label >输出地址：</label>
                     <input id="out" name="out" type="text" placeholder="请输入输出地址" value="com" data-toggle="tooltip"  data-placement="top" title="请输入输出地址"  />
                     <button type="button" class="btn btn-sm btn-default" id="cacheButton" >一键缓存 </button>
                 </div>
-                <div class="package input500">
+                <div class="package input400">
                     <label >controller：</label>
                     <input id="controllerOut" name="controllerOut" type="text"   placeholder="请输入controller地址"  data-toggle="tooltip"  data-placement="top" title="controller 输出地址"  value="controller" />
                     <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
-                <div class="package input500">
+                <div class="package input400">
                     <label >service：</label >
                     <input id="serviceOut" name="serviceOut" type="text"   placeholder="请输入 service地址"  title="service 输出地址" value="service" />
                     <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
-                <div class="package input500">
+                <div class="package input400">
                     <label >entity：</label >
                     <input id="entityOut" name="entityOut" type="text"   placeholder="请输入 entity 地址" title="entity 输出地址" value="entity" />
                     <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
-                <div class="package input500">
+                <div class="package input400">
                     <label >mapper：</label >
                     <input id="mapperOut" name="mapperOut" type="text"   placeholder="请输入 mapper地址"  title="mapper 输出地址" value="mapper" />
                     <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
-                <div class="package input500">
+                <div class="package input400">
                     <label >mapperXml：</label >
                     <input id="mapperXmlOut" name="mapperXmlOut" type="text"   placeholder="请输入 mapper/xml地址"  title="mapper/xml 输出地址" value="xml"  />
                     <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
                 </div>
 
             </div>
-            <div style="width: 50%;float:right;height: 250px;">
+            <div style="width: 35%;float:left;height: 250px;">
+                <div class="package input400">
+                    <label >req：</label>
+                    <input id="reqOut" name="reqOut" type="text" placeholder="请输入输出地址" value="com" data-toggle="tooltip"  data-placement="top" title="请输入输出地址"  />
+                    <button type="button" class="btn btn-sm btn-default" onclick="jinyong(this)"  >禁用</button>
+                </div>
+            </div>
+            <div style="width: 30%;float:right;height: 250px;">
                 <div class="package input300">
                     <label >剔除前缀：</label><input type="text"  placeholder="剔除前缀" id="excludePrefix" name="excludePrefix" />
                 </div>
@@ -177,6 +198,13 @@
         });
 
         initItemAll();
+
+        var outPath = localStorage.getItem(keyPrefix+"out");
+        if (isEmpty(outPath)){
+            pathChange('')
+        }else{
+            pathChange(outPath)
+        }
     });
 
     $("#out").bind('input propertychange', function () {
@@ -200,14 +228,6 @@
         loadData();
     });
 
-
-
-    function isEmpty(outValue) {
-        if (outValue!=null && outValue!='' && outValue!='undefined' && outValue!=undefined){
-            return false;
-        }
-        return true;
-    }
 
     function initItemAll() {
         initItem("out");
@@ -240,7 +260,6 @@
                 $("#searchButton").button('complete');
             },
             success: function (data) {
-
                 if (data.code==0){
                     var rows = data.data.rows;
                     if (rows){
@@ -287,10 +306,9 @@
             }
         }
         if (check_val.length<=0){
-            alert("请选择以下表")
+            alert("请选择以下表");
             return false;
         }
-
 
         $.ajax({
             url: ctx+"generate",
@@ -338,26 +356,20 @@
     function jinyong(obj){
         if(!$(obj).prev().attr("disabled")){
             $(obj).prev().attr("disabled","disabled")
-            $(obj).html("<span style='color:red;'>启用</span>")
+            $(obj).html("<span style='color:#07c160;'>启用</span>")
         }else{
             $(obj).prev().removeAttr("disabled")
             $(obj).html("禁用")
         }
     }
 
-    $.fn.serializeJson = function () {
-        var o = {};
-        var a = this.serializeArray();
-        $.each(a, function () {
-            if (o[this.name]) {
-                o[this.name] = o[this.name].concat(",").concat(this.value);
-            } else {
-                o[this.name] = this.value || '';
-            }
-        });
-        return o;
-    };
 
+    function isEmpty(outValue) {
+        if (outValue!=null && outValue!='' && outValue!='undefined' && outValue!=undefined){
+            return false;
+        }
+        return true;
+    }
     String.prototype.endWith = function (endStr) {
         var d = this.length - endStr.length;
         return (d >= 0 && this.lastIndexOf(endStr) == d);
