@@ -1,6 +1,7 @@
 package com.github.fashionbrot.config;
 
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.github.fashionbrot.exception.QuickException;
 import com.github.fashionbrot.mapper.BaseMapper;
 import com.github.fashionbrot.mapper.MysqlMapper;
@@ -29,7 +30,7 @@ public class DataSourceConfig {
 
 
     @Autowired
-    private HikariDataSource db;
+    private DruidDataSource db;
 
     @Bean
     @Primary

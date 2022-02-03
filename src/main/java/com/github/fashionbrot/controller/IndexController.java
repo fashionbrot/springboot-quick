@@ -6,6 +6,7 @@ import com.github.fashionbrot.req.CodeReq;
 import com.github.fashionbrot.req.PageReq;
 import com.github.fashionbrot.service.QuickService;
 import com.github.fashionbrot.vo.RespVo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("ALL")
+@Slf4j
 @Controller
 public class IndexController {
 
@@ -58,21 +60,37 @@ public class IndexController {
     }
 
 
+
+
     /**
-     * 生成代码
+     * 生成代码 下载文件
+     */
+    @ResponseBody
+    @RequestMapping("/generateZip")
+    public void generateZip(CodeReq req) throws IOException {
+
+        byte[] data = quickService.generatorZip( req);
+        try {
+            response.reset();
+            response.setHeader("Content-Disposition", ("attachment; filename=\"quick.zip\""));
+            response.addHeader("Content-Length", "" + data.length);
+            response.setContentType("application/octet-stream; charset=UTF-8");
+            IOUtils.write(data, response.getOutputStream());
+        }catch (Exception e){
+            log.error("generateZip error",e);
+        }
+
+    }
+
+
+
+    /**
+     * 生成代码 到本地
      */
     @ResponseBody
     @RequestMapping("/generate")
     public RespVo generate(CodeReq req) throws IOException {
-        byte[] data = quickService.generatorCode( req);
-
-        response.reset();
-        response.setHeader("Content-Disposition", ("attachment; filename=\"scaffold.zip\""));
-        response.addHeader("Content-Length", "" + data.length);
-        response.setContentType("application/octet-stream; charset=UTF-8");
-
-        IOUtils.write(data, response.getOutputStream());
-
+        quickService.generatorCode( req);
         return RespVo.success();
     }
 

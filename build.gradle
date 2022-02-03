@@ -75,6 +75,10 @@ dependencies {
 
     compile 'com.aventrix.jnanoid:jnanoid:2.0.0'
 
+    implementation 'com.alibaba:druid:1.2.8'
+
+
+
 }
 
 compileJava.options.encoding = "UTF-8"

@@ -6,7 +6,9 @@ import com.github.fashionbrot.entity.TableEntity;
 import com.github.fashionbrot.exception.QuickException;
 import com.github.fashionbrot.mapper.BaseMapper;
 import com.github.fashionbrot.req.CodeReq;
+import com.github.fashionbrot.req.DatabaseReq;
 import com.github.fashionbrot.req.PageReq;
+import com.github.fashionbrot.tool.CollectionUtil;
 import com.github.fashionbrot.tool.DateUtil;
 import com.github.fashionbrot.tool.StringUtil;
 import com.github.fashionbrot.vo.PageVo;
@@ -24,12 +26,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -43,12 +45,27 @@ public class QuickService {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private DruidService druidService;
 
 
     @Autowired
     private MapConfig mapConfig;
 
     public PageVo queryList(PageReq req) {
+
+
+        List<DatabaseReq> databaseList = druidService.getDatabaseList();
+        Optional<DatabaseReq> first = databaseList.stream().filter(m -> m.getName().equals(req.getDatabaseName())).findFirst();
+        DatabaseReq databaseReq = null;
+        if (first.isPresent()){
+            databaseReq = first.get();
+        }
+        if (databaseReq!=null) {
+            druidService.reload(databaseReq);
+        }
+
+
         Page<?> page = PageHelper.startPage(req.getPage(),req.getPageSize());
         Map<String,Object> map=new HashMap();
 
@@ -70,28 +87,36 @@ public class QuickService {
         return baseMapper.queryColumns(tableName);
     }
 
-    public byte[] generatorCode(CodeReq req) {
-        /*ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    public byte[] generatorZip(CodeReq req){
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(outputStream);
-        Flag flag=new Flag();
-        String[] tableNames=req.getTables().split(",");
-        for(String tableName : tableNames){
-            scaffoldUtil.generator( req,queryTable(tableName), queryColumns(tableName), zip,flag);
-        }
 
-        IOUtils.closeQuietly(zip);
-        return outputStream.toByteArray();*/
 
         String[] tableNames=req.getGenerateTableNames().split(",");
         for(String tableName : tableNames){
-            generator(req,tableName);
+            Map<String,StringWriter> fileMap = generator(req,tableName);
+            if (CollectionUtil.isNotEmpty(fileMap)){
+                createZip(zip,fileMap);
+            }
         }
 
-
-        return null;
+        IOUtils.closeQuietly(zip);
+        return outputStream.toByteArray();
     }
 
-    private void generator(CodeReq req,String tableName){
+    public void generatorCode(CodeReq req) {
+        String[] tableNames=req.getGenerateTableNames().split(",");
+        for(String tableName : tableNames){
+            Map<String,StringWriter> fileMap = generator(req,tableName);
+            if (CollectionUtil.isNotEmpty(fileMap)){
+                for(Map.Entry<String,StringWriter> map: fileMap.entrySet()){
+                    createFile(map.getKey(),map.getValue().toString());
+                }
+            }
+        }
+    }
+
+    private Map<String,StringWriter> generator(CodeReq req,String tableName){
         TableEntity tableEntity = queryTable(tableName);
         if (tableEntity==null){
             throw new QuickException(tableName+"表不存在，请刷新重试");
@@ -123,23 +148,16 @@ public class QuickService {
         VelocityContext velocityContext = initTemplate(req, tableEntity, className, hasBigDecimal);
 
 
+        Map<String,StringWriter> fileMap = generateTemplate( velocityContext, mapConfig.getVm() );
 
-        try {
-            generateTemplate(tableEntity, velocityContext, mapConfig.getVm(),req);
-
-            /*if(flag.isFlag()==false) {
-                generateTemplate( zip, velocityContext, fixedVm);
-                flag.setFlag(true);
-            }*/
-        } catch (IOException e) {
-
-        }
-
-
+        return fileMap;
     }
 
 
-    private void generateTemplate(TableEntity tableEntity, VelocityContext context, Map<String,String > vmMap, CodeReq req) throws IOException {
+    private Map<String,StringWriter> generateTemplate( VelocityContext context, Map<String,String > vmMap){
+
+        Map<String,StringWriter> fileMap = new HashMap<>();
+
         for(Map.Entry<String,String> map: vmMap.entrySet()){
             String path  = (String) context.get(map.getKey());
             String vm = map.getValue();
@@ -147,6 +165,10 @@ public class QuickService {
                 log.info("vm:"+vm+" 未配置地址");
                 continue;
             }
+            path = path.replaceAll("\\.", Matcher.quoteReplacement(File.separator))
+                    .replaceAll("/",Matcher.quoteReplacement(File.separator))
+                    .replaceAll("\\\\",Matcher.quoteReplacement(File.separator));
+
 
             //渲染模板
             StringWriter sw = new StringWriter();
@@ -157,65 +179,31 @@ public class QuickService {
             String className = (String) context.internalGet("className");
             String fileName = path +File.separator+ className+ vm.replaceAll(".vm","").replaceAll("vm/","");
 
-            createFile(fileName,sw.toString());
+            fileMap.put(fileName,sw);
+        }
 
-            System.out.println(fileName);
-            /*String fileName =getFileName(template, className, req);
-            if (StringUtils.isNotBlank(fileName)) {
-                ZipEntry zipEntry = new ZipEntry(fileName);
-                zip.putNextEntry(zipEntry);
-                IOUtils.write(sw.toString(), zip, "UTF-8");
-                IOUtils.closeQuietly(sw);
-                zip.closeEntry();
-            }*/
+        return fileMap;
+    }
+
+    public void createZip(ZipOutputStream zip,Map<String,StringWriter> fileMap){
+        if (CollectionUtil.isNotEmpty(fileMap)){
+            for (Map.Entry<String,StringWriter> map: fileMap.entrySet()) {
+                String key = map.getKey();
+                StringWriter value = map.getValue();
+
+                try {
+                    ZipEntry zipEntry = new ZipEntry(key);
+                    zip.putNextEntry(zipEntry);
+                    IOUtils.write(value.toString(), zip, "UTF-8");
+                    IOUtils.closeQuietly(value);
+                    zip.closeEntry();
+                }catch (Exception e){
+                    log.error("create zip error",e);
+                }
+            }
         }
     }
 
-/*    *//**
-     * 获取文件名
-     *//*
-    public  String getFileName(String template, String className,CodeReq req) {
-        String packagePath =getPackagePath(req);
-
-
-        if (template.contains("Entity.java.vm" )) {
-            return packagePath + "entity" + File.separator + className + "Entity.java";
-        }
-        if (template.contains("Req.java.vm" )) {
-            return packagePath + "req" + File.separator + className + "Req.java";
-        }
-
-        if (template.contains("Mapper.java.vm" )) {
-            return packagePath + "mapper" + File.separator + className + "Mapper.java";
-        }
-
-
-        if (template.contains("Service.java.vm" ) ) {
-            return packagePath + "service" + File.separator + className + "Service.java";
-        }
-        if (template.contains("ServiceImpl.java.vm" )) {
-            return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
-        }
-
-        if (template.contains("Controller.java.vm" )) {
-            return packagePath + "controller" + File.separator + className + "Controller.java";
-        }
-        if ("on".equals(req.getDtoStatus())){
-            if (template.contains("DTO.java.vm" )) {
-                return packagePath + File.separator + "dto" + File.separator + className + "DTO.java";
-            }
-        }
-
-        if (template.contains("Mapper.xml.vm" )) {
-            return packagePath + File.separator + "mapper" + File.separator + "xml" + File.separator + className + "Mapper.xml";
-        }
-
-        if (template.contains("Mapper.xml.vm" )) {
-            return packagePath + File.separator + "mapper" + File.separator + "xml" + File.separator + className + "Mapper.xml";
-        }
-
-        return null;
-    }*/
 
     public void createFile(String fileName,String fileContent) {
         try {
@@ -251,16 +239,16 @@ public class QuickService {
         }
 
 
-        map.put("controllerOut",req.getControllerOut());
-        map.put("serviceOut",req.getServiceOut());
+        map.put("controllerOut",decode(req.getControllerOut()));
+        map.put("serviceOut",decode(req.getServiceOut()));
         if (StringUtil.isNotEmpty(req.getServiceOut())){
-            map.put("serviceImplOut",req.getServiceOut()+File.separator+"impl"+File.separator);
+            map.put("serviceImplOut",decode(req.getServiceOut()+File.separator+"impl"+File.separator));
         }
-        map.put("entityOut",req.getEntityOut());
-        map.put("mapperOut",req.getMapperOut());
-        map.put("mapperXmlOut",req.getMapperXmlOut());
+        map.put("entityOut",decode(req.getEntityOut()));
+        map.put("mapperOut",decode(req.getMapperOut()));
+        map.put("mapperXmlOut",decode(req.getMapperXmlOut()));
 
-        map.put("excludePrefix",req.getExcludePrefix());
+        map.put("excludePrefix",decode(req.getExcludePrefix()));
         map.put("author",req.getAuthor());
         map.put("email",req.getEmail());
         map.put("swaggerStatus","on".equals(req.getSwaggerStatus()));
@@ -315,7 +303,6 @@ public class QuickService {
             // className.toLowerCase()
             map.put("vueFileName", className.toLowerCase());
         }
-        SimpleDateFormat sf=new SimpleDateFormat(DateUtil.DATE_FORMAT_SECOND);
 
         map.put("datetime", DateUtil.formatDate(new Date()));
         map.put("date", DateUtil.formatDate(DateUtil.DATE_FORMAT_DAY_FORMATTER,new Date()));
@@ -326,6 +313,15 @@ public class QuickService {
         return context;
     }
 
+
+    private String decode(String path){
+        try {
+            return URLDecoder.decode(path,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
 
     private void setDataType(TableEntity tableEntity, boolean hasBigDecimal, List<ColumnEntity> columns) {

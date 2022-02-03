@@ -5,6 +5,11 @@ import lombok.Data;
 @Data
 public class CodeReq {
 
+    /**
+     * zip  local
+     */
+    private String outType;
+
     private String out;
     private String controllerOut;
     private String serviceOut;

@@ -7,8 +7,6 @@
     <!-- CSS only -->
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-    <script th:src="@{/js/jquery.min.js}"></script>
-    <script th:src="@{/js/bootstrap.min.js}"></script>
 
 </head>
 <style>
@@ -141,25 +139,36 @@
     }
 
 
+    .addDb{
+        height: 36px;
+        line-height: 36px;
+    }
+    .addDb label{
+        text-align: right;
+    }
 
 </style>
 
 <body>
 
 
-<!--
-    <div class="headDiv">
-
-
-
-    </div>-->
-
-
-
     <div class="left">
         <form id="left">
             <div style="width: 100%;float:left;height: 100%;">
+
             <div class="clear">
+                <div class="p-left">输出类型：</div>
+                <div class="p-right">
+                </div>
+                <div class="p-center">
+                    <select id="outType" name="outType" type="text"   data-placement="top" style="width: 100%;height: 26px;"  >
+                        <option value="local">local本地</option>
+                        <option value="zip">zip包下载</option>
+                    </select>
+                </div>
+            </div>
+
+             <div class="clear">
                 <div class="p-left">输出地址：</div>
                 <div class="p-right">
                     <button type="button" class="btn  btn-sm btn-default" id="cacheButton" >一键缓存 </button>
@@ -236,23 +245,38 @@
 
             <div style="width: 100%;float:right;">
                 <div style="float: left;display: inline;width: 100%;text-align: left;padding: 3px;">
-                    <label >剔除前缀：</label><input type="text" style="width: 100px;" placeholder="剔除前缀" id="excludePrefix" name="excludePrefix" />
-                    <label >作者：</label><input id="author" name="author" type="text" style="width: 100px;"  placeholder="请输入注释的作者名称" value="fashionbrot"  />
+                    <label >剔前缀：</label><input type="text" style="width: 100px;" placeholder="剔除前缀" id="excludePrefix" name="excludePrefix" />
+                    <label >作者：</label><input id="author" name="author" type="text" style="width: 150px;"  placeholder="请输入注释的作者名称" value="fashionbrot"  />
                     <label >邮箱：</label><input id="email" name="email"   type="text"  placeholder="请输入注释的邮箱" value="fashionbrot@163.com" />
                 </div>
                 <div style="float: left;display: inline;width: 100%;text-align: left;padding: 3px;">
                     <label >配置项：</label>
                     swagger:<input type="checkbox" checked="true"  id="swaggerStatus" name="swaggerStatus"  />&nbsp;&nbsp;
                     Dto:<input type="checkbox"   id="dtoStatus" name="dtoStatus"   />&nbsp;&nbsp;
-                    <button type="button" class="btn btn-sm btn-primary" id="generate" onclick="generateCode()" data-complete-text="生成代码">生成代码</button>
 
                 </div>
                 <div style="float: left;display: inline;width: 100%;text-align: left;padding: 3px;">
-                    <label >表名：</label><input type="text"  placeholder="表名" id="tableName" >
+                    <label >数据库：</label><select id="databaseId" style="width: 250px;height: 26px"></select>
+                    <button class="btn btn-sm btn-primary " id="databaseConfig" type="button" >
+                        数据库连接
+                    </button>
+
+                </div>
+
+                <div style="float: left;display: inline;width: 100%;text-align: left;padding: 3px;">
+
+
+                    <label >数据表：</label><input type="text"  placeholder="表名" id="tableName" style="width: 250px;height: 26px" >
                     <button type="button" class="btn btn-sm btn-primary" id="searchButton"
                             data-complete-text="搜索">搜索
                     </button>
                     <button type="button" class="btn btn-sm btn-primary" id="clearButton" >清空 </button>
+
+                    <button type="button" class="btn btn-sm btn-primary" id="generate" onclick="generateCode()" data-complete-text="生成代码">生成代码</button>
+
+
+
+
                 </div>
 
             </div>
@@ -279,211 +303,19 @@
 
     </div>
 
+
+
+    <th:block th:include="database-list :: database-list" />
+    <th:block th:include="add-database :: add-database" />
+
+
+
 </body>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
 <script th:inline="javascript">
     var ctx = [[@{/}]];
 </script>
-<script >
-
-    $(function () {
-        loadData();
-    })
-    var keyPrefix = "quick-out-";
-    $(function() {
-        $("#searchButton").click(function(){
-            loadData();
-        });
-
-        $("#all").click(function(){
-            if(this.checked){
-                $("input[name='checboxName']").prop("checked", true);
-            }else{undefined
-                $("input[name='checboxName']").prop("checked", false);
-            }
-        });
-
-        initItemAll();
-
-        var outPath = localStorage.getItem(keyPrefix+"out");
-        if (isEmpty(outPath)){
-            pathChange('')
-        }else{
-            pathChange(outPath)
-        }
-    });
-
-    $("#out").bind('input propertychange', function () {
-        pathChange(this.value);
-    });
-
-
-    function pathChange(value) {
-        if (value.endWith("\\")){
-            value = value.substring(0,value.length-1);
-        }
-        $("#controllerOut").val(value+"\\controller")
-        $("#serviceOut").val(value+"\\service")
-        $("#reqOut").val(value+"\\req")
-        $("#entityOut").val(value+"\\entity")
-        $("#mapperOut").val(value+"\\mapper")
-        $("#mapperXmlOut").val(value+"\\mapper\\xml")
-    }
-
-    $("#clearButton").on("click",function () {
-        $("#tableName").val('');
-        loadData();
-    });
-
-
-    function initItemAll() {
-        initItem("out");
-        initItem("controllerOut");
-        initItem("serviceOut");
-        initItem("reqOut");
-        initItem("entityOut");
-        initItem("mapperOut");
-        initItem("mapperXmlOut");
-        initItem("author");
-        initItem("email");
-    }
-
-    function initItem(id) {
-        $("#"+id).val(localStorage.getItem(keyPrefix+id))
-    }
-
-    function loadData(){
-        $.ajax({
-            url: ctx+"list",
-            type: "post",
-            data: {"tableName": $("#tableName").val()},
-            dataType: "json",
-            beforeSend: function(){
-                $("#searchButton").button('loading');
-            },
-            complete: function(){
-                $("#searchButton").button('complete');
-            },
-            error:function(){
-                $("#searchButton").button('complete');
-            },
-            success: function (data) {
-                if (data.code==0){
-                    var rows = data.data.rows;
-                    if (rows){
-                        var h = "";
-                        for(var i=0;i<rows.length;i++){
-                            var li = rows[i];
-                            h+="<tr>";
-                                h+="<td>";
-                                    h+="<input type='checkbox' name='checboxName' value='"+li.tableName+"'>"
-                                h+="</td>";
-                                h+="<td>";
-                                    h+=i+1;
-                                h+="</td>";
-                                h+="<td>";
-                                    h+=li.tableName;
-                                h+="</td>";
-                                // h+="<td>";
-                                //     h+=li.engine
-                                // h+="</td>";
-                                h+="<td>";
-                                    h+=li.comments
-                                h+="</td>";
-                                h+="<td>";
-                                    h+=li.createTime
-                                h+="</td>";
-                            h+="</tr>";
-                        }
-                        $("#tableBody").html(h);
-                    }
-                }else{
-                    alert(data.msg);
-                }
-            }
-        });
-    }
-
-    function generateCode() {
-
-        var obj = document.getElementsByName("checboxName");
-        var check_val = [];
-        for (k in obj) {
-            if (obj[k].checked) {
-                check_val.push(obj[k].value);
-            }
-        }
-        if (check_val.length<=0){
-            alert("请选择以下表");
-            return false;
-        }
-
-        $.ajax({
-            url: ctx+"generate",
-            type: "post",
-            data: $("#formDiv").serialize()+"&generateTableNames="+check_val.join(",")+"&"+ $("#left").serialize(),
-            dataType: "json",
-            beforeSend: function(){
-                $("#generate").button('loading');
-            },
-            complete: function(){
-                $("#generate").button('complete');
-            },
-            error:function(){
-                $("#generate").button('complete');
-            },
-            success: function (data) {
-                if (data.code==0){
-                    alert("生成成功");
-                }else{
-                    alert(data.msg);
-                }
-            }
-        });
-    }
-
-
-    $("#cacheButton").on("click",function () {
-        setItem("out");
-        setItem("controllerOut");
-        setItem("serviceOut");
-        setItem("reqOut");
-        setItem("entityOut");
-        setItem("mapperOut");
-        setItem("mapperXmlOut");
-        setItem("author");
-        setItem("email");
-    });
-
-    function setItem(id){
-        var value = $("#"+id).val();
-        if (!isEmpty(value)){
-            localStorage.setItem(keyPrefix+id,value);
-        }
-    }
-
-    function jinyong(obj){
-        var dis = $(obj).parent().parent().find(".p-center input")[0];
-        console.log($(dis))
-        if(!$(dis).attr("disabled")){
-            $(dis).attr("disabled","disabled")
-            $(obj).html("<span style='color:#07c160;'>启用</span>")
-        }else{
-            $(dis).removeAttr("disabled")
-            $(obj).html("禁用")
-        }
-    }
-
-
-    function isEmpty(outValue) {
-        if (outValue!=null && outValue!='' && outValue!='undefined' && outValue!=undefined){
-            return false;
-        }
-        return true;
-    }
-    String.prototype.endWith = function (endStr) {
-        var d = this.length - endStr.length;
-        return (d >= 0 && this.lastIndexOf(endStr) == d);
-    }
-
-</script>
+<script th:src="@{/js/index.js}"></script>
+<script th:src="@{/js/drag-modal.js}"></script>
 </html>

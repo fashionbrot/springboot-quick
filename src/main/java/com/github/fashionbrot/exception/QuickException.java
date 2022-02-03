@@ -17,4 +17,8 @@ public class QuickException extends RuntimeException  {
         super(msg);
         this.msg = msg;
     }
+
+    public static void throwMsg(String msg){
+        throw new QuickException(msg);
+    }
 }

@@ -11,4 +11,6 @@ public class PageReq {
     private int pageSize;
 
     private String tableName;
+
+    private String databaseName;
 }
