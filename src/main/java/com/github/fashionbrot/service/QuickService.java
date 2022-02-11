@@ -129,8 +129,10 @@ public class QuickService {
         boolean hasBigDecimal = false;
 
         List<ColumnEntity> columns = queryColumns(tableName);
-        setDataType(tableEntity, hasBigDecimal, columns);
+        setDataType(tableEntity, hasBigDecimal, columns,req);
         tableEntity.setColumns(columns);
+
+        hasBigDecimal = req.isHasBigDecimal();
 
         //没主键，则第一个字段为主键
         if(tableEntity.getPrimaryKeyColumnEntity() == null){
@@ -158,6 +160,9 @@ public class QuickService {
 
         Map<String,StringWriter> fileMap = new HashMap<>();
 
+        String out =(String) context.get("out");
+        String packageOut =replaceAll((String)context.get("package"));
+
         for(Map.Entry<String,String> map: vmMap.entrySet()){
             String path  = (String) context.get(map.getKey());
             String vm = map.getValue();
@@ -165,9 +170,7 @@ public class QuickService {
                 log.info("vm:"+vm+" 未配置地址");
                 continue;
             }
-            path = path.replaceAll("\\.", Matcher.quoteReplacement(File.separator))
-                    .replaceAll("/",Matcher.quoteReplacement(File.separator))
-                    .replaceAll("\\\\",Matcher.quoteReplacement(File.separator));
+            path = replaceAll(path);
 
 
             //渲染模板
@@ -177,12 +180,18 @@ public class QuickService {
             //添加到zip
             //替换表前缀
             String className = (String) context.internalGet("className");
-            String fileName = path +File.separator+ className+ vm.replaceAll(".vm","").replaceAll("vm/","");
+            String fileName =out+File.separator+packageOut+File.separator+ path +File.separator+ className+ vm.replaceAll(".vm","").replaceAll("vm/","");
 
             fileMap.put(fileName,sw);
         }
 
         return fileMap;
+    }
+
+    private String replaceAll(String str){
+        return str.replaceAll("\\.", Matcher.quoteReplacement(File.separator))
+                .replaceAll("/",Matcher.quoteReplacement(File.separator))
+                .replaceAll("\\\\",Matcher.quoteReplacement(File.separator));
     }
 
     public void createZip(ZipOutputStream zip,Map<String,StringWriter> fileMap){
@@ -213,6 +222,8 @@ public class QuickService {
             }
             if(!file.exists()) {
                 file.createNewFile();
+            }else{
+                file.delete();
             }
             FileOutputStream out=new FileOutputStream(file,true);
             out.write(fileContent.getBytes("utf-8"));
@@ -229,31 +240,34 @@ public class QuickService {
         Map<String, Object> map = new HashMap<>();
 
         map.put("out",req.getOut());
-        if (StringUtil.isNotEmpty(req.getEntityOut())){
-            req.setEntityOut(req.getEntityOut().replaceAll("//","/"));
-            if (req.getEntityOut().contains("/")){
-                map.put("reqOut",req.getEntityOut().substring(0,req.getEntityOut().lastIndexOf("/"))+File.separator+"req"+File.separator);
-            }else if (req.getEntityOut().contains("\\")){
-                map.put("reqOut",req.getEntityOut().substring(0,req.getEntityOut().lastIndexOf("\\"))+File.separator+"req"+File.separator);
-            }
+        map.put("package",req.getPackageOut());
+
+        if (StringUtil.isNotEmpty(req.getReqOut())) {
+            map.put("reqOut", decode(req.getReqOut()));
         }
-
-
-        map.put("controllerOut",decode(req.getControllerOut()));
-        map.put("serviceOut",decode(req.getServiceOut()));
+        if (StringUtil.isNotEmpty(req.getControllerOut())) {
+            map.put("controllerOut", decode(req.getControllerOut()));
+        }
         if (StringUtil.isNotEmpty(req.getServiceOut())){
-            map.put("serviceImplOut",decode(req.getServiceOut()+File.separator+"impl"+File.separator));
+            map.put("serviceOut",decode(req.getServiceOut()));
+            map.put("serviceImplOut",decode(req.getServiceOut())+Matcher.quoteReplacement(File.separator)+"impl"+Matcher.quoteReplacement(File.separator));
         }
-        map.put("entityOut",decode(req.getEntityOut()));
-        map.put("mapperOut",decode(req.getMapperOut()));
-        map.put("mapperXmlOut",decode(req.getMapperXmlOut()));
+        if (StringUtil.isNotEmpty(req.getEntityOut())) {
+            map.put("entityOut", decode(req.getEntityOut()));
+        }
+        if (StringUtil.isNotEmpty(req.getMapperOut())) {
+            map.put("mapperOut", decode(req.getMapperOut()));
+        }
+        if (StringUtil.isNotEmpty(req.getMapperXmlOut())) {
+            map.put("mapperXmlOut", decode(req.getMapperXmlOut()));
+        }
 
         map.put("excludePrefix",decode(req.getExcludePrefix()));
         map.put("author",req.getAuthor());
         map.put("email",req.getEmail());
         map.put("swaggerStatus","on".equals(req.getSwaggerStatus()));
         map.put("dtoStatus","on".equals(req.getDtoStatus()));
-
+        map.put("insertsStatus","on".equals(req.getInsertsStatus()));
 
 
         map.put("oldTableName", tableEntity.getTableName());
@@ -268,25 +282,30 @@ public class QuickService {
         }
         map.put("pk", tableEntity.getPrimaryKeyColumnEntity());
         map.put("className", tableEntity.getClassName().replace(captureName(req.getExcludePrefix()),""));
-
         map.put("variableClassName", tableEntity.getVariableClassName());
         map.put("columns", tableEntity.getColumns());
+
+
         StringBuilder sb=new StringBuilder();
         StringBuilder sb2=new StringBuilder();
         for(ColumnEntity c:tableEntity.getColumns()){
             if (StringUtils.isNotBlank(sb.toString())) {
-                sb.append(",").append(c.getColumnName());
-                sb2.append(",a.").append(c.getColumnName());
+
+                    sb.append(",").append(c.getColumnName());
+                    sb2.append(",a.").append(c.getColumnName());
+
             }else{
-                sb.append(c.getColumnName());
-                sb2.append("a."+c.getColumnName());
+
+                    sb.append(c.getColumnName());
+                    sb2.append("a."+c.getColumnName());
+
             }
         }
         map.put("allColumnNames",sb.toString());
         map.put("allColumnNames2",sb2.toString());
 
         map.put("hasBigDecimal", hasBigDecimal);
-        /* map.put("main", main);*/
+
         // API接口排序
         if(tableEntity.getCreateTime()!= null){
             map.put("apiSort", StringUtils.substring(String.valueOf(tableEntity.getCreateTime().getTime() + System.currentTimeMillis()), 1, 9));
@@ -307,6 +326,7 @@ public class QuickService {
         map.put("datetime", DateUtil.formatDate(new Date()));
         map.put("date", DateUtil.formatDate(DateUtil.DATE_FORMAT_DAY_FORMATTER,new Date()));
         map.put("projectName","example");
+
 //        map.put("package2",map.get("package").toString().replace(".","/"));
         VelocityContext context = new VelocityContext(map);
 
@@ -324,12 +344,25 @@ public class QuickService {
     }
 
 
-    private void setDataType(TableEntity tableEntity, boolean hasBigDecimal, List<ColumnEntity> columns) {
+    private void setDataType(TableEntity tableEntity, boolean hasBigDecimal, List<ColumnEntity> columns,CodeReq req) {
+
+
+        String keyword = environment.getProperty("mars.quick.keyword");
+        String[] keywords = keyword.split(",");
+
         for(ColumnEntity columnEntity: columns){
             //列名转换成Java属性名
             String attrName = columnToJava(columnEntity.getColumnName());
             columnEntity.setAttrName(attrName);
             columnEntity.setVariableAttrName(StringUtils.uncapitalize(attrName));
+
+            columnEntity.setColumnNameXmlUse(columnEntity.getColumnName());
+            if (Arrays.stream(keywords).filter(m-> m.equals(columnEntity.getColumnName())).count()>0){
+                columnEntity.setColumnName("`"+columnEntity.getColumnName()+"`");
+            }
+
+
+
 
             //列的数据类型，转换成Java类型
             if("NUMBER".equals(columnEntity.getDataType()) && columnEntity.getDataScale() > 0){
@@ -340,7 +373,7 @@ public class QuickService {
                 String attrType = environment.getProperty(columnEntity.getDataType(), "unknowType");
                 columnEntity.setAttrType(attrType);
                 if (!hasBigDecimal && attrType.equals("BigDecimal" )) {
-                    hasBigDecimal = true;
+                    req.setHasBigDecimal(true);
                 }
             }
             //是否主键

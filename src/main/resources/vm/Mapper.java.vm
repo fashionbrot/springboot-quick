@@ -1,9 +1,11 @@
 
-package ${package}.mapper;
+package ${package}${mapperOut};
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import ${package}.entity.${className}Entity;
+import ${package}${entityOut}.${className}Entity;
+#if ($dtoStatus==true)
 import ${package}.dto.${className}Dto;
+#end
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -23,7 +25,7 @@ import java.util.Map;
 public interface ${className}Mapper extends BaseMapper<${className}Entity> {
 
     #*List<${className}Dto> ${variableClassName}List(@Param("params") Map<String, Object> params);*#
-
+    #if (${insertsStatus})
     int inserts(List<${className}Entity> list);
-
+    #end
 }

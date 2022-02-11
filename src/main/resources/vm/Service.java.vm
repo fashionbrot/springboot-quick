@@ -1,14 +1,13 @@
-package ${package}.service;
+package ${package}${serviceOut};
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 #if ($dtoStatus==true)
-import ${package}.dto.${className}Dto;
+import ${package}.dto.${className}DTO;
 #end
-import ${package}.entity.${className}Entity;
+import ${package}${entityOut}.${className}Entity;
 import ${package}.req.${className}Req;
 import ${package}.vo.PageVo;
-import ${package}.service.BaseService;
 import ${package}.req.${className}Req;
 
 import java.util.List;

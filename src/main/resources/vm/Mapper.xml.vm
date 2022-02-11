@@ -6,7 +6,7 @@
 
     <resultMap type="${package}.entity.${className}Entity" id="${variableClassName}Map">
         #foreach($column in $columns)
-            <result property="${column.variableAttrName}" column="${column.columnName}"/>
+            <result property="${column.variableAttrName}" column="${column.columnNameXmlUse}"/>
         #end
     </resultMap>
 
@@ -14,7 +14,7 @@
 
     <resultMap type="${package}.dto.${className}Dto" id="${variableClassName}DtoMap">
         #foreach($column in $columns)
-            <result property="${column.variableAttrName}" column="${column.columnName}"/>
+            <result property="${column.variableAttrName}" column="${column.columnNameXmlUse}"/>
         #end
     </resultMap>
     #end
@@ -36,7 +36,7 @@
         WHERE del_flag = 0
     </select>*#
 
-
+    #if (${insertsStatus})
     <insert id="inserts" parameterType="java.util.List">
         insert into ${oldTableName}(
             #foreach($column in $columns)
@@ -57,6 +57,6 @@
             )
         </foreach>
     </insert>
-
+    #end
 
 </mapper>

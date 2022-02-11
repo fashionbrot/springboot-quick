@@ -18,12 +18,12 @@ $(function () {
 
     initItemAll();
 
-    var outPath = localStorage.getItem(keyPrefix + "out");
-    if (isEmpty(outPath)) {
-        pathChange('')
-    } else {
-        pathChange(outPath)
-    }
+    // var outPath = localStorage.getItem(keyPrefix + "out");
+    // if (isEmpty(outPath)) {
+    //     pathChange('')
+    // } else {
+    //     pathChange(outPath)
+    // }
 
 });
 
@@ -32,8 +32,8 @@ $("#databaseConfig").on("click", function () {
     $('#myModal').modal('show')
 })
 
-$("#out").bind('input propertychange', function () {
-    pathChange(this.value);
+$("#packageOut").bind('input propertychange', function () {
+    // pathChange(this.value);
 });
 
 
@@ -57,6 +57,7 @@ $("#clearButton").on("click", function () {
 
 function initItemAll() {
     initItem("out");
+    initItem("packageOut")
     initItem("controllerOut");
     initItem("serviceOut");
     initItem("reqOut");
@@ -186,6 +187,7 @@ jQuery.download = function(url, data, method){ // 获得url和data
 
 $("#cacheButton").on("click", function () {
     setItem("out");
+    setItem("packageOut");
     setItem("controllerOut");
     setItem("serviceOut");
     setItem("reqOut");

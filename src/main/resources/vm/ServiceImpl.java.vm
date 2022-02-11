@@ -1,4 +1,4 @@
-package ${package}.service.impl;
+package ${package}${serviceOut}.impl;
 
 
 
@@ -6,10 +6,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${package}.mapper.${className}Mapper;
 import ${package}.dao.${className}Dao;
 #if ($dtoStatus==true)
-import ${package}.dto.${className}Dto;
+import ${package}.dto.${className}DTO;
 #end
-import ${package}.entity.${className}Entity;
-import ${package}.service.${className}Service;
+import ${package}${entityOut}.${className}Entity;
+import ${package}${serviceOut}.${className}Service;
 import ${package}.req.${className}Req;
 import ${package}.vo.PageVo;
 import ${package}.enums.RespCode;

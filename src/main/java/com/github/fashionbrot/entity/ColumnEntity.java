@@ -18,6 +18,10 @@ public class ColumnEntity {
      */
     private String columnName;
     /**
+     * 列名
+     */
+    private String columnNameXmlUse;
+    /**
      * 列名类型
      */
     private String dataType;
