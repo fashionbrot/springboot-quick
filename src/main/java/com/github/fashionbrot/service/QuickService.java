@@ -268,7 +268,9 @@ public class QuickService {
         map.put("swaggerStatus","on".equals(req.getSwaggerStatus()));
         map.put("dtoStatus","on".equals(req.getDtoStatus()));
         map.put("insertsStatus","on".equals(req.getInsertsStatus()));
-
+        if ("on".equals(req.getDtoStatus())){
+            map.put("dtoOut",req.getPackageOut()+".dto");
+        }
 
         map.put("oldTableName", tableEntity.getTableName());
         // 处理注释
