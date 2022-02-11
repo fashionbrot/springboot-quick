@@ -1,5 +1,5 @@
 package ${package}.dto;
-#if ($swaggerStatus==1)
+#if (${swaggerStatus})
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 #end
@@ -19,14 +19,14 @@ import java.math.BigDecimal;
  * @date ${date}
  */
 @Data
-#if ($swaggerStatus==1)
+#if (${swaggerStatus})
 @ApiModel(value = "${commentsEntity}")
 #end
 public class ${className}Dto implements Serializable {
 
 
 	#foreach ($column in $columns)
-	#if ($swaggerStatus==1)
+	#if (${swaggerStatus})
 	@ApiModelProperty(value = "$column.comments")
 	#else
 	/**

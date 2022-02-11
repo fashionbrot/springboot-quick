@@ -135,7 +135,7 @@ function generateCode() {
         return false;
     }
 
-    var data = $("#formDiv").serialize() + "&generateTableNames=" + check_val.join(",") + "&" + $("#left").serialize();
+    var data = $("#formDiv").serialize() + "&generateTableNames=" + check_val.join(",") + "&" + $("#left").serialize()+"&databaseName="+$("#databaseId").val();
     var outType = $("#outType").val();
     if (outType=="zip"){
         var url = ctx + "generateZip";

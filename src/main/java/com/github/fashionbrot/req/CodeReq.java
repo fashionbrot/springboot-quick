@@ -29,4 +29,6 @@ public class CodeReq {
     private String insertsStatus;
 
     private boolean hasBigDecimal;
+
+    private String databaseName;
 }

@@ -54,16 +54,7 @@ public class QuickService {
 
     public PageVo queryList(PageReq req) {
 
-
-        List<DatabaseReq> databaseList = druidService.getDatabaseList();
-        Optional<DatabaseReq> first = databaseList.stream().filter(m -> m.getName().equals(req.getDatabaseName())).findFirst();
-        DatabaseReq databaseReq = null;
-        if (first.isPresent()){
-            databaseReq = first.get();
-        }
-        if (databaseReq!=null) {
-            druidService.reload(databaseReq);
-        }
+        reloadDatabase(req.getDatabaseName());
 
 
         Page<?> page = PageHelper.startPage(req.getPage(),req.getPageSize());
@@ -78,6 +69,26 @@ public class QuickService {
                 .build();
     }
 
+    public void reloadDatabase(String databaseName){
+        if (!connectDatabase ){
+            List<DatabaseReq> databaseList = druidService.getDatabaseList();
+            if (StringUtil.isEmpty(databaseName)){
+                databaseName = databaseList.get(0).getName();
+            }
+            String finalDatabaseName = databaseName;
+            Optional<DatabaseReq> first = databaseList.stream().filter(m -> m.getName().equals(finalDatabaseName)).findFirst();
+            DatabaseReq databaseReq = null;
+            if (first.isPresent()){
+                databaseReq = first.get();
+            }
+            if (databaseReq!=null) {
+                connectDatabase = true;
+                druidService.reload(databaseReq);
+            }
+        }
+
+    }
+
 
     public TableEntity queryTable(String tableName) {
         return baseMapper.queryTable(tableName);
@@ -88,6 +99,9 @@ public class QuickService {
     }
 
     public byte[] generatorZip(CodeReq req){
+
+        reloadDatabase(req.getDatabaseName());
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(outputStream);
 
@@ -105,6 +119,9 @@ public class QuickService {
     }
 
     public void generatorCode(CodeReq req) {
+
+        reloadDatabase(req.getDatabaseName());
+
         String[] tableNames=req.getGenerateTableNames().split(",");
         for(String tableName : tableNames){
             Map<String,StringWriter> fileMap = generator(req,tableName);
@@ -116,7 +133,14 @@ public class QuickService {
         }
     }
 
+    private boolean connectDatabase =  false;
+
     private Map<String,StringWriter> generator(CodeReq req,String tableName){
+
+
+
+
+
         TableEntity tableEntity = queryTable(tableName);
         if (tableEntity==null){
             throw new QuickException(tableName+"表不存在，请刷新重试");
@@ -269,7 +293,7 @@ public class QuickService {
         map.put("dtoStatus","on".equals(req.getDtoStatus()));
         map.put("insertsStatus","on".equals(req.getInsertsStatus()));
         if ("on".equals(req.getDtoStatus())){
-            map.put("dtoOut",req.getPackageOut()+".dto");
+            map.put("dtoOut",".dto");
         }
 
         map.put("oldTableName", tableEntity.getTableName());
