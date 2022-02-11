@@ -115,7 +115,7 @@ function loadData() {
                     $("#tableBody").html(h);
                 }
             } else {
-                alert(data.msg);
+                Toast(data.msg);
             }
         }
     });
@@ -131,7 +131,7 @@ function generateCode() {
         }
     }
     if (check_val.length <= 0) {
-        alert("请选择以下表");
+        Toast("请选择以下表");
         return false;
     }
 
@@ -160,7 +160,7 @@ function generateCode() {
                 },
                 success: function (data) {
                     if (data.code == 0) {
-                        alert("生成成功");
+                        Toast("生成成功");
                     } else {
                         alert(data.msg);
                     }
@@ -340,4 +340,18 @@ function isEmpty(outValue) {
 String.prototype.endWith = function (endStr) {
     var d = this.length - endStr.length;
     return (d >= 0 && this.lastIndexOf(endStr) == d);
+}
+
+function Toast(msg,duration){
+    duration=isNaN(duration)?3000:duration;
+    var m = document.createElement('div');
+    m.innerHTML = msg;
+    m.style.cssText="max-width:60%;min-width: 150px;padding:0 14px;height: 40px;color: rgb(255, 255, 255);line-height: 40px;text-align: center;border-radius: 4px;position: fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);z-index: 999999;background: rgba(0, 0, 0,.7);font-size: 16px;";
+    document.body.appendChild(m);
+    setTimeout(function() {
+        var d = 0.5;
+        m.style.webkitTransition = '-webkit-transform ' + d + 's ease-in, opacity ' + d + 's ease-in';
+        m.style.opacity = '0';
+        setTimeout(function() { document.body.removeChild(m) }, d * 1000);
+    }, duration);
 }
