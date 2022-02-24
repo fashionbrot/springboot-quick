@@ -18,12 +18,13 @@ $(function () {
 
     initItemAll();
 
-    // var outPath = localStorage.getItem(keyPrefix + "out");
-    // if (isEmpty(outPath)) {
-    //     pathChange('')
-    // } else {
-    //     pathChange(outPath)
-    // }
+
+    $("#controllerOut").val(".controller")
+    $("#serviceOut").val(".service")
+    $("#reqOut").val(".req")
+    $("#entityOut").val(".entity")
+    $("#mapperOut").val(".mapper")
+    $("#mapperXmlOut").val(".mapper.xml")
 
 });
 
