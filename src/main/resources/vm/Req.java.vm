@@ -1,8 +1,9 @@
 package ${package}.req;
 
 import ${package}.req.PageReq;
-import lombok.Data;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper=false)
 @Data
 public class ${className}Req extends PageReq {
 

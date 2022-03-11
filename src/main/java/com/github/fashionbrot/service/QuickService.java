@@ -70,11 +70,12 @@ public class QuickService {
     }
 
     public void reloadDatabase(String databaseName){
-        if (!connectDatabase ){
+        if (!connectDatabase || (StringUtils.isNotBlank(dbName) && !dbName.equals(databaseName)) ){
             List<DatabaseReq> databaseList = druidService.getDatabaseList();
             if (StringUtil.isEmpty(databaseName)){
                 databaseName = databaseList.get(0).getName();
             }
+            dbName = databaseName;
             String finalDatabaseName = databaseName;
             Optional<DatabaseReq> first = databaseList.stream().filter(m -> m.getName().equals(finalDatabaseName)).findFirst();
             DatabaseReq databaseReq = null;
@@ -134,6 +135,7 @@ public class QuickService {
     }
 
     private boolean connectDatabase =  false;
+    private String dbName = "";
 
     private Map<String,StringWriter> generator(CodeReq req,String tableName){
 
