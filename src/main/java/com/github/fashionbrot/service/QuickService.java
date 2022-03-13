@@ -383,19 +383,15 @@ public class QuickService {
         map.put("columns", tableEntity.getColumns());
 
 
-        StringBuilder sb=new StringBuilder();
-        StringBuilder sb2=new StringBuilder();
-        for(ColumnEntity c:tableEntity.getColumns()){
+        StringBuilder sb = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
+        for (ColumnEntity c : tableEntity.getColumns()) {
             if (StringUtils.isNotBlank(sb.toString())) {
-
-                    sb.append(",").append(c.getColumnName());
-                    sb2.append(",a.").append(c.getColumnName());
-
-            }else{
-
-                    sb.append(c.getColumnName());
-                    sb2.append("a."+c.getColumnName());
-
+                sb.append(",").append(c.getColumnName());
+                sb2.append(",a.").append(c.getColumnName());
+            } else {
+                sb.append(c.getColumnName());
+                sb2.append("a." + c.getColumnName());
             }
         }
         map.put("allColumnNames",sb.toString());
