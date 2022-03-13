@@ -1,7 +1,8 @@
 package ${package}.req;
 
 import ${package}.req.PageReq;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper=false)
 @Data

@@ -3,6 +3,9 @@
 #### 介绍
 springboot  mybatis-plus  swagger配置 脚手架 
 
+springboot 2.6.0
+mybatis-plus 3.5.1
+
 #### 软件架构
 软件架构说明
 

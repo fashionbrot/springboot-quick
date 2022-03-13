@@ -52,6 +52,9 @@ public class QuickService {
     @Autowired
     private MapConfig mapConfig;
 
+    private String SRC_MAIN_JAVA = File.separator+"src"+File.separator+"main"+File.separator+"java";
+    private String SRC_MAIN_RESOURCES = File.separator+"src"+File.separator+"main"+File.separator+"resources";
+
     public PageVo queryList(PageReq req) {
 
         reloadDatabase(req.getDatabaseName());
@@ -115,6 +118,13 @@ public class QuickService {
             }
         }
 
+        if ("on".equals(req.getFixed())) {
+            Map<String, StringWriter> fixedMap = generateFixed(req);
+            if (CollectionUtil.isNotEmpty(fixedMap)) {
+                createZip(zip, fixedMap);
+            }
+        }
+
         IOUtils.closeQuietly(zip);
         return outputStream.toByteArray();
     }
@@ -132,15 +142,23 @@ public class QuickService {
                 }
             }
         }
+
+        if ("on".equals(req.getFixed())){
+            Map<String, StringWriter> fixedMap = generateFixed(req);
+            if (CollectionUtil.isNotEmpty(fixedMap)){
+                for(Map.Entry<String,StringWriter> map: fixedMap.entrySet()){
+                    createFile(map.getKey(),map.getValue().toString());
+                }
+            }
+        }
+
+
     }
 
     private boolean connectDatabase =  false;
     private String dbName = "";
 
     private Map<String,StringWriter> generator(CodeReq req,String tableName){
-
-
-
 
 
         TableEntity tableEntity = queryTable(tableName);
@@ -176,9 +194,63 @@ public class QuickService {
         VelocityContext velocityContext = initTemplate(req, tableEntity, className, hasBigDecimal);
 
 
-        Map<String,StringWriter> fileMap = generateTemplate( velocityContext, mapConfig.getVm() );
+        Map<String,StringWriter> fileMap = generateTemplate( velocityContext, mapConfig.getUnset() );
 
         return fileMap;
+    }
+
+    private Map<String,StringWriter> generateFixed(CodeReq req){
+        VelocityContext velocityContext = initTemplate(req);
+        Map<String,StringWriter> fileMap = new HashMap<>();
+        List<String> list = mapConfig.getFixed();
+
+        String out =(String) velocityContext.get("out");
+        String packageOut =replaceAll((String)velocityContext.get("package"));
+
+        if (CollectionUtil.isNotEmpty(list)){
+            for (int i = 0; i < list.size() ; i++) {
+                String vm = list.get(i);
+                String[] vms = vm.split(",");
+                String fileName = vms[0];
+                String lasePackage = vms[1];
+                String vmPath = vms[2];
+
+                //渲染模板
+                StringWriter sw = getStringWriter(vmPath, velocityContext);
+
+                String javaFileNamePath =out+SRC_MAIN_JAVA+File.separator+packageOut+File.separator+ lasePackage +File.separator+ fileName;
+
+                fileMap.put(javaFileNamePath,sw);
+            }
+        }
+        if ("on".equals(req.getFixed())) {
+            if ("maven".equals(req.getCompileType())) {
+                //渲染模板
+                StringWriter sw = getStringWriter("vm/fixed/pom.xml.vm", velocityContext);
+
+                String javaFileNamePath = out + File.separator  + "pom.xml";
+
+                fileMap.put(javaFileNamePath, sw);
+            } else if ("gradle".equals(req.getCompileType())) {
+                //渲染模板
+                StringWriter sw = getStringWriter("vm/fixed/build.gradle.vm", velocityContext);
+                String javaFileNamePath = out + File.separator  + "build.gradle";
+                fileMap.put(javaFileNamePath, sw);
+
+                StringWriter sw2 = getStringWriter("vm/fixed/settings.gradle.vm", velocityContext);
+                String javaFileNamePath2 = out + File.separator  + "settings.gradle";
+                fileMap.put(javaFileNamePath2, sw2);
+            }
+        }
+
+        return fileMap;
+    }
+
+    private StringWriter getStringWriter(String name, VelocityContext velocityContext) {
+        StringWriter sw = new StringWriter();
+        Template tpl = Velocity.getTemplate(name, "UTF-8");
+        tpl.merge(velocityContext, sw);
+        return sw;
     }
 
 
@@ -200,13 +272,11 @@ public class QuickService {
 
 
             //渲染模板
-            StringWriter sw = new StringWriter();
-            Template tpl = Velocity.getTemplate(vm, "UTF-8");
-            tpl.merge(context, sw);
+            StringWriter sw = getStringWriter(vm, context);
             //添加到zip
             //替换表前缀
             String className = (String) context.internalGet("className");
-            String fileName =out+File.separator+packageOut+File.separator+ path +File.separator+ className+ vm.replaceAll(".vm","").replaceAll("vm/","");
+            String fileName =out+SRC_MAIN_JAVA+File.separator+packageOut+File.separator+ path +File.separator+ className+ vm.replaceAll(".vm","").replaceAll("vm/","");
 
             fileMap.put(fileName,sw);
         }
@@ -264,7 +334,6 @@ public class QuickService {
     private VelocityContext initTemplate(CodeReq req, TableEntity tableEntity, String className, boolean hasBigDecimal) {
 
         Map<String, Object> map = new HashMap<>();
-
         map.put("out",req.getOut());
         map.put("package",req.getPackageOut());
 
@@ -362,6 +431,49 @@ public class QuickService {
     }
 
 
+    //封装模板数据
+    private VelocityContext initTemplate(CodeReq req) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("out",req.getOut());
+        map.put("package",req.getPackageOut());
+
+        if (StringUtil.isNotEmpty(req.getReqOut())) {
+            map.put("reqOut", decode(req.getReqOut()));
+        }
+        if (StringUtil.isNotEmpty(req.getControllerOut())) {
+            map.put("controllerOut", decode(req.getControllerOut()));
+        }
+        if (StringUtil.isNotEmpty(req.getServiceOut())){
+            map.put("serviceOut",decode(req.getServiceOut()));
+            map.put("serviceImplOut",decode(req.getServiceOut())+Matcher.quoteReplacement(File.separator)+"impl"+Matcher.quoteReplacement(File.separator));
+        }
+        if (StringUtil.isNotEmpty(req.getEntityOut())) {
+            map.put("entityOut", decode(req.getEntityOut()));
+        }
+        if (StringUtil.isNotEmpty(req.getMapperOut())) {
+            map.put("mapperOut", decode(req.getMapperOut()));
+        }
+        if (StringUtil.isNotEmpty(req.getMapperXmlOut())) {
+            map.put("mapperXmlOut", decode(req.getMapperXmlOut()));
+        }
+
+        map.put("excludePrefix",decode(req.getExcludePrefix()));
+        map.put("author",req.getAuthor());
+        map.put("email",req.getEmail());
+        map.put("swaggerStatus","on".equals(req.getSwaggerStatus()));
+        map.put("dtoStatus","on".equals(req.getDtoStatus()));
+        map.put("insertsStatus","on".equals(req.getInsertsStatus()));
+        if ("on".equals(req.getDtoStatus())){
+            map.put("dtoOut",".dto");
+        }
+        map.put("datetime", DateUtil.formatDate(new Date()));
+        map.put("date", DateUtil.formatDate(DateUtil.DATE_FORMAT_DAY_FORMATTER,new Date()));
+        map.put("projectName","example");
+        VelocityContext context = new VelocityContext(map);
+        return context;
+    }
+
     private String decode(String path){
         try {
             return URLDecoder.decode(path,"UTF-8");
@@ -388,9 +500,6 @@ public class QuickService {
             if (Arrays.stream(keywords).filter(m-> m.equals(columnEntity.getColumnName())).count()>0){
                 columnEntity.setColumnName("`"+columnEntity.getColumnName()+"`");
             }
-
-
-
 
             //列的数据类型，转换成Java类型
             if("NUMBER".equals(columnEntity.getDataType()) && columnEntity.getDataScale() > 0){

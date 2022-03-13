@@ -6,15 +6,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "map")
+@ConfigurationProperties(prefix = "vm")
 public class MapConfig {
 
-    private Map<String,String> vm;
+    private Map<String,String> unset;
 
-    private Map<String,String> fixed;
+    private List<String> fixed;
 
 }

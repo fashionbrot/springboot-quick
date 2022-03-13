@@ -31,4 +31,11 @@ public class CodeReq {
     private boolean hasBigDecimal;
 
     private String databaseName;
+
+    /**
+     * 是否生成 表之外的固定文件
+     */
+    private String fixed;
+
+    private String compileType;
 }
