@@ -18,4 +18,7 @@ public class MapConfig {
 
     private List<String> fixed;
 
+    private List<String> root;
+
+    private List<String> resource;
 }

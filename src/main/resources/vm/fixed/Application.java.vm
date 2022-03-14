@@ -1,0 +1,29 @@
+package ${package};
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.env.Environment;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+@Slf4j
+@SpringBootApplication
+public class Application {
+
+    private static Environment environment;
+
+    @Autowired
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class,args);
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        log.info("Start to finish:{}  port:{}", sf.format(new Date()),environment.getProperty("server.port"));
+    }
+
+}

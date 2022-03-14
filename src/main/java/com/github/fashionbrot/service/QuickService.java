@@ -217,19 +217,18 @@ public class QuickService {
 
                 //渲染模板
                 StringWriter sw = getStringWriter(vmPath, velocityContext);
-
                 String javaFileNamePath =out+SRC_MAIN_JAVA+File.separator+packageOut+File.separator+ lasePackage +File.separator+ fileName;
-
                 fileMap.put(javaFileNamePath,sw);
             }
         }
         if ("on".equals(req.getFixed())) {
+
+
+
             if ("maven".equals(req.getCompileType())) {
                 //渲染模板
                 StringWriter sw = getStringWriter("vm/fixed/pom.xml.vm", velocityContext);
-
                 String javaFileNamePath = out + File.separator  + "pom.xml";
-
                 fileMap.put(javaFileNamePath, sw);
             } else if ("gradle".equals(req.getCompileType())) {
                 //渲染模板
@@ -241,6 +240,47 @@ public class QuickService {
                 String javaFileNamePath2 = out + File.separator  + "settings.gradle";
                 fileMap.put(javaFileNamePath2, sw2);
             }
+
+
+            List<String> rootList = mapConfig.getRoot();
+            if (CollectionUtil.isNotEmpty(rootList)){
+                for (String ff: rootList) {
+                    String[] ss = ff.split(",");
+                    if (ss!=null && ss.length==3){
+                        String fileName = ss[0];
+                        String packagePath = ss[1];
+                        String vmPath = ss[2];
+                        if (StringUtil.isEmpty(fileName) || StringUtil.isEmpty(vmPath)){
+                            continue;
+                        }
+
+                        StringWriter sw2 = getStringWriter(vmPath, velocityContext);
+                        String javaFileNamePath2 = out + File.separator +packagePath+File.separator + fileName;
+                        fileMap.put(javaFileNamePath2, sw2);
+                    }
+                }
+            }
+
+            List<String> resourceList =  mapConfig.getResource();
+            if (CollectionUtil.isNotEmpty(resourceList)){
+                for (String ff: resourceList) {
+                    String[] ss = ff.split(",");
+
+                    if (ss!=null && ss.length==3) {
+                        String fileName = ss[0];
+                        String packagePath = ss[1];
+                        String vmPath = ss[2];
+                        if (StringUtil.isEmpty(fileName) || StringUtil.isEmpty(vmPath)) {
+                            continue;
+                        }
+
+                        StringWriter sw2 = getStringWriter(vmPath, velocityContext);
+                        String javaFileNamePath2 = out + SRC_MAIN_RESOURCES + File.separator + packagePath + File.separator + fileName;
+                        fileMap.put(javaFileNamePath2, sw2);
+                    }
+                }
+            }
+
         }
 
         return fileMap;

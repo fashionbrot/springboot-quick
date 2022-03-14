@@ -121,7 +121,7 @@ public class ${className}Controller  {
     @ApiOperation("批量删除")
     @PostMapping("/deleteByIds")
     @ResponseBody
-    public RespVo deleteByIds(@RequestBody Long[] ids){
+    public RespVo deleteByIds(Long[] ids){
         ${classServiceImpl}Service.removeByIds(Arrays.asList(ids));
         return RespVo.success();
     }

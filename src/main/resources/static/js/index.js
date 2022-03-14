@@ -149,6 +149,7 @@ function generateCode() {
             $.ajax({
                 url: ctx + "generate",
                 type: "post",
+                timeout: 2000,
                 data: data,
                 dataType: "json",
                 beforeSend: function () {
