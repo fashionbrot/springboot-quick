@@ -77,6 +77,7 @@ function loadData() {
     $.ajax({
         url: ctx + "list",
         type: "post",
+        timeout:3000,
         data: {"tableName": $("#tableName").val(), "databaseName": $("#databaseId").val()},
         dataType: "json",
         beforeSend: function () {

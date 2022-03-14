@@ -4,7 +4,6 @@ package ${package}${serviceOut}.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${package}.mapper.${className}Mapper;
-import ${package}.dao.${className}Dao;
 #if ($dtoStatus==true)
 import ${package}.dto.${className}DTO;
 #end
@@ -12,11 +11,8 @@ import ${package}${entityOut}.${className}Entity;
 import ${package}${serviceOut}.${className}Service;
 import ${package}.req.${className}Req;
 import ${package}.vo.PageVo;
-import ${package}.enums.RespCode;
+import ${package}.enums.RespEnum;
 import ${package}.vo.RespVo;
-import ${package}.exception.CurdException;
-import ${package}.service.impl.BaseServiceImpl;
-import ${package}.util.ConvertUtil;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -45,8 +41,8 @@ public class ${className}ServiceImpl  extends ServiceImpl<${className}Mapper,${c
     @Override
     public Object pageReq(${className}Req req) {
         Page<?> page = PageHelper.startPage(req.getPageNum(),req.getPageSize());
-        Map<String,Object> map = ConvertUtil.toMap(req);
-        List<${className}Entity> listByMap = baseMapper.selectByMap(map);
+
+        List<${className}Entity> listByMap = baseMapper.selectByMap(null);
 
         return PageVo.builder()
                 .rows(listByMap)
