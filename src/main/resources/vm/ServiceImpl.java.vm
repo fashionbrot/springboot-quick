@@ -39,7 +39,7 @@ public class ${className}ServiceImpl  extends ServiceImpl<${className}Mapper,${c
     private ${className}Mapper ${variableClassName}Mapper;
 
     @Override
-    public Object pageReq(${className}Req req) {
+    public Object pageList(${className}Req req) {
         Page<?> page = PageHelper.startPage(req.getPageNum(),req.getPageSize());
 
         List<${className}Entity> listByMap = baseMapper.selectByMap(null);

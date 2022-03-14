@@ -24,6 +24,6 @@ import java.util.Collection;
  */
 public interface ${className}Service  extends IService<${className}Entity>{
 
-    Object pageReq(${className}Req req);
+    Object pageList(${className}Req req);
 
 }

@@ -408,8 +408,9 @@ public class QuickService {
         if(StringUtils.isNotBlank(tableEntity.getTableName())){
             String tableName = StringUtils.lowerCase(tableEntity.getTableName());
             map.put("pathName", tableName.replace("_","/"));
-            map.put("permissionPrefix", tableName.replace("_",":"));
-
+            map.put("permissionPrefix", tableEntity.getVariableClassName());
+            map.put("classServiceImpl",tableEntity.getVariableClassName());
+            map.put("requestMappingPath",tableEntity.getVariableClassName());
             // 前端权限标识
             map.put("apiPermission", tableName.replace("_",":"));
             // className.toLowerCase()
