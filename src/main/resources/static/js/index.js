@@ -257,10 +257,16 @@ function loadDatabaseShowTable() {
                     var html = "";
                     for (var i = 0; i < rows.length; i++) {
                         var row = rows[i];
+
+                        var url= row.url;
+                        if (url){
+                            url = row.url.replaceAll("?","<br/>").replaceAll("&","<br/>")
+                        }
+
                         html += "<tr>";
                         html += "<td class='name'>" + row.name + "</td>";
                         html += "<td class='driverClassName'>" + row.driverClassName + "</td>";
-                        html += "<td class='url'>" + row.url + "</td>";
+                        html += "<td class='url' value='"+row.url+"' style='width:200px;'>" + url + "</td>";
                         html += "<td class='username'>" + row.username + "</td>";
                         html += "<td class='password'>" + row.password + "</td>";
                         html += "<td> <a type=\"button\" class=\"btn btn-xs\"  onclick=\"deleteDatabase('" + row.name + "')\" >删除</a> <a type=\"button\" class=\"btn btn-xs\"  onclick=\"updateDatabase(this)\" >修改</a></td>";
@@ -319,7 +325,7 @@ function updateDatabase(obj) {
     var parent = $(obj).parent().parent();
     $("#name").val(parent.find(".name").html());
     $("#driverClassName").val(parent.find(".driverClassName").html());
-    $("#url").val(HTMLDecode(parent.find(".url").html()));
+    $("#url").val(HTMLDecode(parent.find(".url").attr("value")));
     $("#password").val(parent.find(".password").html());
     $("#username").val(parent.find(".username").html());
     $("#add").modal("show");
