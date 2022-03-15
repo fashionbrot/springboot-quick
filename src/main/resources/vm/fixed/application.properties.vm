@@ -6,7 +6,7 @@ spring.datasource.hikari.maximum-pool-size=20
 spring.datasource.hikari.minimum-idle=5
 spring.datasource.hikari.max-lifetime=1800000
 spring.datasource.driver-class-name=com.mysql.jdbc.Driver
-spring.datasource.url=jdbc:mysql://127.0.0.1:3306/test?Unicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&tinyInt1isBit=false&rewriteBatchedStatements=true&allowMultiQueries=true
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/mdc?Unicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&tinyInt1isBit=false&rewriteBatchedStatements=true&allowMultiQueries=true
 spring.datasource.username=root
 spring.datasource.password=123456
 

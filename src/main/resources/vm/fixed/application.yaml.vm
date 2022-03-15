@@ -31,7 +31,7 @@ pagehelper:
   support-methods-arguments: false
 
 mybatis-plus:
-  mapper-locations: classpath*:com/github/fashionbrot/mapper/xml/*.xml
-  type-aliases-package: com.github.fashionbrot.entity
+  mapper-locations: classpath*:com/gitee/fashionbrot/mapper/xml/*.xml
+  type-aliases-package: com.gitee.fashionbrot.entity
 
 

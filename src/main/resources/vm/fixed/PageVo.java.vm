@@ -9,10 +9,10 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
-public class PageVo {
+public class PageVo<T> {
 
 
-    private List<?> rows;
+    private List<T> rows;
 
     private long total;
 

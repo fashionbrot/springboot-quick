@@ -44,7 +44,7 @@ public class ${className}ServiceImpl  extends ServiceImpl<${className}Mapper,${c
 
         List<${className}Entity> listByMap = baseMapper.selectByMap(null);
 
-        return PageVo.builder()
+        return PageVo.<${className}Entity>builder()
                 .rows(listByMap)
                 .total(page.getTotal())
                 .build();

@@ -5,6 +5,8 @@ springboot  mybatis-plus  swagger配置 脚手架
 
 springboot 2.6.0
 mybatis-plus 3.5.1
+maven
+gradle(开发中)
 
 #### 软件架构
 软件架构说明
@@ -13,6 +15,9 @@ mybatis-plus 3.5.1
 #### 安装教程
 
 访问地址 http://localhost:8081
+
+生产的代码修改数据库配置,和mybatis配置后，可以直接运行
+文档地址：http://ip:port/doc.html 
 
 #### 使用说明
 
@@ -29,4 +34,8 @@ mybatis-plus 3.5.1
 
 #### 特技
 
-![Image text](./doc/20220224202837.png)
+![Image text](./doc/p0.png)
+![Image text](./doc/p1.png)
+![Image text](./doc/pp1.png)
+![Image text](./doc/pp2.png)
+![Image text](./doc/pp3.png)

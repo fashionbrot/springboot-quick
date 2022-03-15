@@ -65,7 +65,7 @@ public class ${className}Controller  {
     @ApiOperation("分页列表")
     @GetMapping("/pageList")
     @ResponseBody
-    public RespVo pageList(${className}Req req) {
+    public RespVo<PageVo<List<${className}Entity>>> pageList(${className}Req req) {
         return RespVo.success(${classServiceImpl}Service.pageList(req));
     }
 
@@ -74,7 +74,7 @@ public class ${className}Controller  {
     @ApiOperation("数据列表")
     @GetMapping("/list")
     @ResponseBody
-    public RespVo list(@RequestParam Map<String, Object> params){
+    public RespVo<List<${className}Entity>> list(@RequestParam Map<String, Object> params){
         return  RespVo.success(${classServiceImpl}Service.listByMap(params));
     }
 
@@ -83,7 +83,7 @@ public class ${className}Controller  {
     @ApiOperation("根据id查询")
     @PostMapping("/getById")
     @ResponseBody
-    public RespVo getById(Long id){
+    public RespVo<${className}Entity> getById(Long id){
         return RespVo.success(${classServiceImpl}Service.getById(id));
     }
 
