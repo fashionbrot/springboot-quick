@@ -24,15 +24,15 @@ import java.util.Date;
  * @email ${email}
  * @date ${date}
  */
+@TableName("${oldTableName}")
 #if (${swaggerStatus})
 @ApiModel(value = "${commentsEntity}")
 #end
 @Data
-@EqualsAndHashCode(callSuper=false)
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-@TableName("${oldTableName}")
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class ${className}Entity implements Serializable {
 
 
