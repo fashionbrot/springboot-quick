@@ -1,0 +1,83 @@
+plugins {
+    id 'java'
+    id "org.springframework.boot" version "2.6.0"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+}
+
+group '${package}'
+version '1.0'
+
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+// 指定java版本
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+processResources {
+    from('src/main/java') {
+        include '**/**Mapper.xml'
+    }
+}
+
+
+repositories {
+    mavenLocal()
+    maven { url "https://maven.aliyun.com/repository/public" }
+    maven { url "https://maven.aliyun.com/repository/jcenter" }
+    maven { url "https://maven.aliyun.com/repository/spring" }
+    maven { url "https://maven.aliyun.com/repository/spring-plugin" }
+    maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+    maven { url "https://maven.aliyun.com/repository/google" }
+    maven { url "https://maven.aliyun.com/repository/grails-core" }
+    maven { url "https://maven.aliyun.com/repository/apache-snapshots" }
+    maven { url 'https://repo.spring.io/plugins-snapshot' }
+}
+
+ext{
+    log4j="2.17.1"
+    pagehelper="1.3.0"
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    implementation 'com.alibaba:fastjson:1.2.79'
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.boot:spring-boot-starter-logging"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation "mysql:mysql-connector-java"
+
+    implementation 'com.github.fashionbrot:mars-validated:2.0.1'
+    implementation "com.github.fashionbrot:mars-tool:0.0.2"
+
+    implementation 'org.springframework.boot:spring-boot-devtools:2.6.3'
+
+
+    compile "org.apache.logging.log4j:log4j-api:${log4j}"
+    compile "org.apache.logging.log4j:log4j-core:${log4j}"
+    compile "org.apache.logging.log4j:log4j-to-slf4j:${log4j}"
+
+
+    compile 'org.apache.commons:commons-lang3:3.10'
+    compile 'commons-io:commons-io:2.5'
+
+    compile 'com.baomidou:mybatis-plus-boot-starter:3.5.0'
+    compile 'com.aventrix.jnanoid:jnanoid:2.0.0'
+
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.4.1'
+
+    implementation 'com.github.xiaoymin:swagger-bootstrap-ui:1.9.6'
+    implementation 'com.github.xiaoymin:knife4j-spring-boot-starter:3.0.2'
+
+}
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
