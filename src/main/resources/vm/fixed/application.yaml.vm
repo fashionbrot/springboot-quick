@@ -24,11 +24,6 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-pagehelper:
-  helper-dialect: mysql
-  params: count=countSql
-  reasonable: true
-  support-methods-arguments: false
 
 mybatis-plus:
   mapper-locations: classpath*:com/gitee/fashionbrot/mapper/xml/*.xml

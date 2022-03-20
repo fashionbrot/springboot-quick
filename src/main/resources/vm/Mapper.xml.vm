@@ -4,7 +4,7 @@
 <mapper namespace="${package}.mapper.${className}Mapper">
 
 
-    <resultMap type="${package}.entity.${className}Entity" id="${variableClassName}Map">
+    <resultMap type="${variableClassName}Entity" id="${variableClassName}Map">
         #foreach($column in $columns)
             <result property="${column.variableAttrName}" column="${column.columnNameXmlUse}"/>
         #end
@@ -12,7 +12,7 @@
 
     #if ($dtoStatus==true)
 
-    <resultMap type="${package}.dto.${className}Dto" id="${variableClassName}DtoMap">
+    <resultMap type="${variableClassName}Dto" id="${variableClassName}DtoMap">
         #foreach($column in $columns)
             <result property="${column.variableAttrName}" column="${column.columnNameXmlUse}"/>
         #end

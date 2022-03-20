@@ -72,7 +72,6 @@ dependencies {
     compile 'com.aventrix.jnanoid:jnanoid:2.0.0'
 
     compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
-    implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.4.1'
 
     implementation 'com.github.xiaoymin:swagger-bootstrap-ui:1.9.6'
     implementation 'com.github.xiaoymin:knife4j-spring-boot-starter:3.0.2'
