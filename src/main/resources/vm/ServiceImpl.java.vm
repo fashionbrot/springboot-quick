@@ -38,7 +38,7 @@ public class ${className}ServiceImpl  extends ServiceImpl<${className}Mapper,${c
     @Override
     public Object pageList(${className}Req req) {
 
-        Page<AppEntity> page=new Page<>(req.getPageNum(),req.getPageSize());
+        Page<${className}Entity> page=new Page<>(req.getPageNum(),req.getPageSize());
         baseMapper.selectPage(page,null);
 
         return PageVo.<${className}Entity>builder()
