@@ -97,7 +97,7 @@ public class ${className}Controller  {
     }
 
 
-    @MarsPermission("${permissionPrefix}updateById")
+    @MarsPermission("${permissionPrefix}UpdateById")
     @ApiOperation("修改")
     @PostMapping("/updateById")
     @ResponseBody
