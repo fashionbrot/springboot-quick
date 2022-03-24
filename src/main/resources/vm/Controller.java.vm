@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.Collection;
-
+import lombok.RequiredArgsConstructor;
 
 /**
  * ${commentsEntity}
@@ -41,6 +41,7 @@ import java.util.Collection;
 #end
 @RequestMapping("/${requestMappingPath}")
 @Controller
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ${className}Controller  {
 
     /**
@@ -56,8 +57,12 @@ public class ${className}Controller  {
      */
 
 
-    @Autowired
-    public ${className}Service ${classServiceImpl}Service;
+##    @Autowired
+##    public ${className}Service ${classServiceImpl}Service;
+
+    final ${className}Service ${classServiceImpl}Service;
+
+
 
 
 

@@ -21,6 +21,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ${commentsEntity}
@@ -29,11 +31,15 @@ import java.util.Map;
  * @email ${email}
  * @date ${date}
  */
+@Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ${className}ServiceImpl  extends ServiceImpl<${className}Mapper,${className}Entity> implements ${className}Service {
 
-    @Autowired
-    private ${className}Mapper ${variableClassName}Mapper;
+##    @Autowired
+##    private ${className}Mapper ${variableClassName}Mapper;
+
+    final ${className}Mapper ${variableClassName}Mapper;
 
     @Override
     public Object pageList(${className}Req req) {
