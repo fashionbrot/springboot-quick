@@ -1,7 +1,7 @@
 package com.github.fashionbrot.jdbc;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.fashionbrot.exception.QuickException;
-import com.github.fashionbrot.tool.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +53,7 @@ public class JdbcService<T> {
                         try {
                             if (p instanceof String) {
                                 String param = (String) p;
-                                if (StringUtil.isNotEmpty(param)) {
+                                if (StringUtils.isNotEmpty(param)) {
                                     preparedStatement.setString(index, param);
                                     index++;
                                 }

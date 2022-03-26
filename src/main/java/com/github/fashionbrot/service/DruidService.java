@@ -5,14 +5,14 @@ import com.alibaba.fastjson.JSON;
 import com.github.fashionbrot.Consts.GlobalConsts;
 import com.github.fashionbrot.exception.QuickException;
 import com.github.fashionbrot.req.DatabaseReq;
-import com.github.fashionbrot.tool.CollectionUtil;
-import com.github.fashionbrot.tool.StringUtil;
 import com.github.fashionbrot.util.FileUtil;
 import com.github.fashionbrot.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -27,6 +27,7 @@ public class DruidService {
     private Environment environment;
 
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private DruidDataSource druidDataSource;
 
@@ -34,7 +35,7 @@ public class DruidService {
     public String getPath(){
 
         String path = environment.getProperty("mars.quick.cache.path");
-        if (StringUtil.isEmpty(path)) {
+        if (StringUtils.isEmpty(path)) {
             path = FileUtil.USER_HOME;
         }
         path = path + File.separator + GlobalConsts.NAME+File.separator;
@@ -52,9 +53,9 @@ public class DruidService {
         String path = getPath()+getFileName();
 
         List<File> files = FileUtil.searchFiles(new File(path), getFileName());
-        if (CollectionUtil.isNotEmpty(files)) {
+        if (!CollectionUtils.isEmpty(files)) {
             String fileContent = FileUtil.getFileContent(files.get(0));
-            if (StringUtil.isEmpty(fileContent)) {
+            if (StringUtils.isEmpty(fileContent)) {
                 return null;
             }
             return JsonUtil.parseArray(DatabaseReq.class, fileContent);
@@ -65,10 +66,10 @@ public class DruidService {
 
 
     public void reload(DatabaseReq req){
-        if (StringUtil.isEmpty(req.getName())) {
+        if (StringUtils.isEmpty(req.getName())) {
             QuickException.throwMsg("请输入此配置名称");
         }
-        if (StringUtil.isEmpty(req.getUrl())) {
+        if (StringUtils.isEmpty(req.getUrl())) {
             QuickException.throwMsg("请输入数据库配置");
         }
         try {
@@ -79,7 +80,7 @@ public class DruidService {
 
 
         String marsQuickCacheName =getFileName();
-        if (StringUtil.isEmpty(marsQuickCacheName)) {
+        if (StringUtils.isEmpty(marsQuickCacheName)) {
             QuickException.throwMsg("mars.quick.cache.name The value cannot be empty. Please configure it");
         }
         String path =getPath();
@@ -88,11 +89,11 @@ public class DruidService {
         List<File> files = FileUtil.searchFiles(new File(filePath), marsQuickCacheName);
 
         List<DatabaseReq> old = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(files)) {
+        if (!CollectionUtils.isEmpty(files)) {
             old.add(req);
             String fileContent = FileUtil.getFileContent(files.get(0));
             List<DatabaseReq> databases = JsonUtil.parseArray(DatabaseReq.class, fileContent);
-            if (CollectionUtil.isNotEmpty(databases)){
+            if (!CollectionUtils.isEmpty(databases)){
                 for(int i=0;i<databases.size();i++){
                     DatabaseReq databaseReq = databases.get(i);
                     if (databaseReq!=null && !databaseReq.getName().equals(req.getName())){

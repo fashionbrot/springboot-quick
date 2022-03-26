@@ -1,5 +1,6 @@
 package com.github.fashionbrot.service;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.github.fashionbrot.config.MapConfig;
 import com.github.fashionbrot.entity.ColumnEntity;
 import com.github.fashionbrot.entity.TableEntity;
@@ -8,16 +9,12 @@ import com.github.fashionbrot.mapper.BaseMapper;
 import com.github.fashionbrot.req.CodeReq;
 import com.github.fashionbrot.req.DatabaseReq;
 import com.github.fashionbrot.req.PageReq;
-import com.github.fashionbrot.tool.CollectionUtil;
-import com.github.fashionbrot.tool.DateUtil;
-import com.github.fashionbrot.tool.StringUtil;
 import com.github.fashionbrot.vo.PageVo;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -60,7 +57,7 @@ public class QuickService {
         reloadDatabase(req.getDatabaseName());
 
 
-        Page<?> page = PageHelper.startPage(req.getPage(),req.getPageSize());
+
         Map<String,Object> map=new HashMap();
 
         map.put("tableName",req.getTableName());
@@ -68,14 +65,14 @@ public class QuickService {
 
         return PageVo.builder()
                 .rows(list)
-                .total(page.getTotal())
+                .total(list.size())
                 .build();
     }
 
     public void reloadDatabase(String databaseName){
         if (!connectDatabase || (StringUtils.isNotBlank(dbName) && !dbName.equals(databaseName)) ){
             List<DatabaseReq> databaseList = druidService.getDatabaseList();
-            if (StringUtil.isEmpty(databaseName)){
+            if (StringUtils.isEmpty(databaseName)){
                 databaseName = databaseList.get(0).getName();
             }
             dbName = databaseName;
@@ -113,14 +110,14 @@ public class QuickService {
         String[] tableNames=req.getGenerateTableNames().split(",");
         for(String tableName : tableNames){
             Map<String,StringWriter> fileMap = generator(req,tableName);
-            if (CollectionUtil.isNotEmpty(fileMap)){
+            if (CollectionUtils.isNotEmpty(fileMap)){
                 createZip(zip,fileMap);
             }
         }
 
         if ("on".equals(req.getFixed())) {
             Map<String, StringWriter> fixedMap = generateFixed(req);
-            if (CollectionUtil.isNotEmpty(fixedMap)) {
+            if (CollectionUtils.isNotEmpty(fixedMap)) {
                 createZip(zip, fixedMap);
             }
         }
@@ -136,8 +133,9 @@ public class QuickService {
         String[] tableNames=req.getGenerateTableNames().split(",");
         for(String tableName : tableNames){
             Map<String,StringWriter> fileMap = generator(req,tableName);
-            if (CollectionUtil.isNotEmpty(fileMap)){
+            if (CollectionUtils.isNotEmpty(fileMap)){
                 for(Map.Entry<String,StringWriter> map: fileMap.entrySet()){
+
                     createFile(map.getKey(),map.getValue().toString());
                 }
             }
@@ -145,7 +143,7 @@ public class QuickService {
 
         if ("on".equals(req.getFixed())){
             Map<String, StringWriter> fixedMap = generateFixed(req);
-            if (CollectionUtil.isNotEmpty(fixedMap)){
+            if (CollectionUtils.isNotEmpty(fixedMap)){
                 for(Map.Entry<String,StringWriter> map: fixedMap.entrySet()){
                     createFile(map.getKey(),map.getValue().toString());
                 }
@@ -207,7 +205,7 @@ public class QuickService {
         String out =(String) velocityContext.get("out");
         String packageOut =replaceAll((String)velocityContext.get("package"));
 
-        if (CollectionUtil.isNotEmpty(list)){
+        if (CollectionUtils.isNotEmpty(list)){
             for (int i = 0; i < list.size() ; i++) {
                 String vm = list.get(i);
                 String[] vms = vm.split(",");
@@ -243,14 +241,14 @@ public class QuickService {
 
 
             List<String> rootList = mapConfig.getRoot();
-            if (CollectionUtil.isNotEmpty(rootList)){
+            if (CollectionUtils.isNotEmpty(rootList)){
                 for (String ff: rootList) {
                     String[] ss = ff.split(",");
                     if (ss!=null && ss.length==3){
                         String fileName = ss[0];
                         String packagePath = ss[1];
                         String vmPath = ss[2];
-                        if (StringUtil.isEmpty(fileName) || StringUtil.isEmpty(vmPath)){
+                        if (StringUtils.isEmpty(fileName) || StringUtils.isEmpty(vmPath)){
                             continue;
                         }
 
@@ -262,7 +260,7 @@ public class QuickService {
             }
 
             List<String> resourceList =  mapConfig.getResource();
-            if (CollectionUtil.isNotEmpty(resourceList)){
+            if (CollectionUtils.isNotEmpty(resourceList)){
                 for (String ff: resourceList) {
                     String[] ss = ff.split(",");
 
@@ -270,7 +268,7 @@ public class QuickService {
                         String fileName = ss[0];
                         String packagePath = ss[1];
                         String vmPath = ss[2];
-                        if (StringUtil.isEmpty(fileName) || StringUtil.isEmpty(vmPath)) {
+                        if (StringUtils.isEmpty(fileName) || StringUtils.isEmpty(vmPath)) {
                             continue;
                         }
 
@@ -304,8 +302,8 @@ public class QuickService {
         for(Map.Entry<String,String> map: vmMap.entrySet()){
             String path  = (String) context.get(map.getKey());
             String vm = map.getValue();
-            if (StringUtil.isEmpty(path)){
-                log.info("vm:"+vm+" 未配置地址");
+            if (StringUtils.isEmpty(path)){
+                log.info("vm:"+vm+" 未选中，不生成");
                 continue;
             }
             path = replaceAll(path);
@@ -331,7 +329,7 @@ public class QuickService {
     }
 
     public void createZip(ZipOutputStream zip,Map<String,StringWriter> fileMap){
-        if (CollectionUtil.isNotEmpty(fileMap)){
+        if (CollectionUtils.isNotEmpty(fileMap)){
             for (Map.Entry<String,StringWriter> map: fileMap.entrySet()) {
                 String key = map.getKey();
                 StringWriter value = map.getValue();
@@ -342,6 +340,8 @@ public class QuickService {
                     IOUtils.write(value.toString(), zip, "UTF-8");
                     IOUtils.closeQuietly(value);
                     zip.closeEntry();
+
+                    log.info("file:"+key+" 开始生成");
                 }catch (Exception e){
                     log.error("create zip error",e);
                 }
@@ -364,6 +364,7 @@ public class QuickService {
             FileOutputStream out=new FileOutputStream(file,true);
             out.write(fileContent.getBytes("utf-8"));
             out.close();
+            log.info("fileName:"+fileName+" 开始生成");
         }catch (Exception e){
             log.error("createFile error",e);
         }
@@ -377,23 +378,23 @@ public class QuickService {
         map.put("out",req.getOut());
         map.put("package",req.getPackageOut());
 
-        if (StringUtil.isNotEmpty(req.getReqOut())) {
+        if (StringUtils.isNotEmpty(req.getReqOut())) {
             map.put("reqOut", decode(req.getReqOut()));
         }
-        if (StringUtil.isNotEmpty(req.getControllerOut())) {
+        if (StringUtils.isNotEmpty(req.getControllerOut())) {
             map.put("controllerOut", decode(req.getControllerOut()));
         }
-        if (StringUtil.isNotEmpty(req.getServiceOut())){
+        if (StringUtils.isNotEmpty(req.getServiceOut())){
             map.put("serviceOut",decode(req.getServiceOut()));
             map.put("serviceImplOut",decode(req.getServiceOut())+Matcher.quoteReplacement(File.separator)+"impl"+Matcher.quoteReplacement(File.separator));
         }
-        if (StringUtil.isNotEmpty(req.getEntityOut())) {
+        if (StringUtils.isNotEmpty(req.getEntityOut())) {
             map.put("entityOut", decode(req.getEntityOut()));
         }
-        if (StringUtil.isNotEmpty(req.getMapperOut())) {
+        if (StringUtils.isNotEmpty(req.getMapperOut())) {
             map.put("mapperOut", decode(req.getMapperOut()));
         }
-        if (StringUtil.isNotEmpty(req.getMapperXmlOut())) {
+        if (StringUtils.isNotEmpty(req.getMapperXmlOut())) {
             map.put("mapperXmlOut", decode(req.getMapperXmlOut()));
         }
 
@@ -457,8 +458,8 @@ public class QuickService {
             map.put("vueFileName", className.toLowerCase());
         }
 
-        map.put("datetime", DateUtil.formatDate(new Date()));
-        map.put("date", DateUtil.formatDate(DateUtil.DATE_FORMAT_DAY_FORMATTER,new Date()));
+        map.put("datetime", DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
+        map.put("date", DateFormatUtils.format(new Date(),"yyyy-MM-dd"));
         map.put("projectName","example");
 
 //        map.put("package2",map.get("package").toString().replace(".","/"));
@@ -475,23 +476,23 @@ public class QuickService {
         map.put("out",req.getOut());
         map.put("package",req.getPackageOut());
 
-        if (StringUtil.isNotEmpty(req.getReqOut())) {
+        if (StringUtils.isNotEmpty(req.getReqOut())) {
             map.put("reqOut", decode(req.getReqOut()));
         }
-        if (StringUtil.isNotEmpty(req.getControllerOut())) {
+        if (StringUtils.isNotEmpty(req.getControllerOut())) {
             map.put("controllerOut", decode(req.getControllerOut()));
         }
-        if (StringUtil.isNotEmpty(req.getServiceOut())){
+        if (StringUtils.isNotEmpty(req.getServiceOut())){
             map.put("serviceOut",decode(req.getServiceOut()));
             map.put("serviceImplOut",decode(req.getServiceOut())+Matcher.quoteReplacement(File.separator)+"impl"+Matcher.quoteReplacement(File.separator));
         }
-        if (StringUtil.isNotEmpty(req.getEntityOut())) {
+        if (StringUtils.isNotEmpty(req.getEntityOut())) {
             map.put("entityOut", decode(req.getEntityOut()));
         }
-        if (StringUtil.isNotEmpty(req.getMapperOut())) {
+        if (StringUtils.isNotEmpty(req.getMapperOut())) {
             map.put("mapperOut", decode(req.getMapperOut()));
         }
-        if (StringUtil.isNotEmpty(req.getMapperXmlOut())) {
+        if (StringUtils.isNotEmpty(req.getMapperXmlOut())) {
             map.put("mapperXmlOut", decode(req.getMapperXmlOut()));
         }
 
@@ -504,8 +505,8 @@ public class QuickService {
         if ("on".equals(req.getDtoStatus())){
             map.put("dtoOut",".dto");
         }
-        map.put("datetime", DateUtil.formatDate(new Date()));
-        map.put("date", DateUtil.formatDate(DateUtil.DATE_FORMAT_DAY_FORMATTER,new Date()));
+        map.put("datetime", DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
+        map.put("date", DateFormatUtils.format(new Date(),"yyyy-MM-dd"));
         map.put("projectName","example");
         VelocityContext context = new VelocityContext(map);
         return context;
