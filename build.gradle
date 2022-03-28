@@ -81,7 +81,6 @@ dependencies {
     implementation "org.tinylog:log4j1.2-api:${tinylog_version}"
     implementation 'com.alibaba:fastjson:1.2.79'
 
-
 }
 
 compileJava.options.encoding = "UTF-8"
