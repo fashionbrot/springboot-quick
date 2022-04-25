@@ -1,7 +1,7 @@
 # springboot-quick
 
 #### 介绍
-springboot  mybatis-plus  swagger配置 脚手架 
+springboot  mybatis-plus  swagger配置 脚手架   gitee：https://gitee.com/fashionbrot/springboot-quick.git
 
 #### 1、 springboot 2.6.0
 #### 2、mybatis-plus 3.5.1
