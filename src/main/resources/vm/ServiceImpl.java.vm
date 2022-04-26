@@ -1,7 +1,7 @@
 package ${package}${serviceOut}.impl;
 
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${package}.mapper.${className}Mapper;
 #if ($dtoStatus==true)
@@ -14,6 +14,12 @@ import ${package}.vo.PageVo;
 import ${package}.enums.RespEnum;
 import ${package}.vo.RespVo;
 
+#if (${pagehelperStatus})
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+#else
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+#end
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,14 +49,23 @@ public class ${className}ServiceImpl  extends ServiceImpl<${className}Mapper,${c
 
     @Override
     public Object pageList(${className}Req req) {
+        #if (${pagehelperStatus})
+        Page<?> page = PageHelper.startPage(req.getPageNum(),req.getPageSize());
+        List<${className}Entity> listByMap = baseMapper.selectByMap(null);
 
+        return PageVo.<${className}Entity>builder()
+                .rows(listByMap)
+                .total(page.getTotal())
+                .build();
+        #else
         Page<${className}Entity> page=new Page<>(req.getPageNum(),req.getPageSize());
         baseMapper.selectPage(page,null);
-
         return PageVo.<${className}Entity>builder()
                 .rows(page.getRecords())
                 .total(page.getTotal())
                 .build();
+        #end
+
     }
 
 }
