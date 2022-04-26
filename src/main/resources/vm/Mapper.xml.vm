@@ -3,6 +3,8 @@
 
 <mapper namespace="${package}.mapper.${className}Mapper">
 
+    #if ($mapperXmlAliasStatus)
+
 
     <resultMap type="${variableClassName}Entity" id="${variableClassName}Map">
         #foreach($column in $columns)
@@ -10,13 +12,34 @@
         #end
     </resultMap>
 
-    #if ($dtoStatus==true)
+    #if ($dtoStatus)
 
     <resultMap type="${variableClassName}Dto" id="${variableClassName}DtoMap">
         #foreach($column in $columns)
             <result property="${column.variableAttrName}" column="${column.columnNameXmlUse}"/>
         #end
     </resultMap>
+    #end
+
+
+    #else
+
+
+    <resultMap type="${package}.entity.${className}Entity" id="${variableClassName}Map">
+        #foreach($column in $columns)
+            <result property="${column.variableAttrName}" column="${column.columnNameXmlUse}"/>
+        #end
+    </resultMap>
+
+    #if ($dtoStatus)
+        <resultMap type="${package}.dto.${className}Dto" id="${variableClassName}DtoMap">
+            #foreach($column in $columns)
+                <result property="${column.variableAttrName}" column="${column.columnNameXmlUse}"/>
+            #end
+        </resultMap>
+    #end
+
+
     #end
 
     <sql id="allSql">

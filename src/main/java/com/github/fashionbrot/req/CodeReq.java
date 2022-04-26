@@ -40,4 +40,6 @@ public class CodeReq {
     private String compileType;
 
     private String pagehelperStatus;
+
+    private String mapperXmlAliasStatus;
 }

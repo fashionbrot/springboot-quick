@@ -72,11 +72,11 @@ dependencies {
 ##    compile "org.apache.logging.log4j:log4j-to-slf4j:${log4j}"
 
 
-    compile 'org.apache.commons:commons-lang3:3.10'
-    compile 'commons-io:commons-io:2.5'
+    implementation 'org.apache.commons:commons-lang3:3.10'
+    implementation 'commons-io:commons-io:2.5'
 
-    compile 'com.baomidou:mybatis-plus-boot-starter:3.5.0'
-    compile 'com.aventrix.jnanoid:jnanoid:2.0.0'
+    implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.0'
+    implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
 
     compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
 

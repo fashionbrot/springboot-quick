@@ -173,8 +173,8 @@
                 </div>
                 <div class="p-center">
                     <select id="compileType" name="compileType" type="text"   data-placement="top" style="width: 100%;height: 26px;"  >
-                        <option value="maven">maven</option>
                         <option value="gradle">gradle</option>
+                        <option value="maven">maven</option>
                     </select>
                 </div>
             </div>
@@ -270,12 +270,13 @@
                 </div>
                 <div style="float: left;display: inline;width: 100%;text-align: left;padding: 3px;">
                     <label >配置项：</label>
-                    基础类:<input type="checkbox" title="vo类,config配置类,异常类,枚举类"   id="fixed" name="fixed"  />&nbsp;&nbsp;
+                    基础类:<input type="checkbox" checked="checked" title="vo类,config配置类,异常类,枚举类"   id="fixed" name="fixed"  />&nbsp;&nbsp;
 
-                    swagger:<input type="checkbox" checked="true"  id="swaggerStatus" name="swaggerStatus"  />&nbsp;
-                    pagehelper:<input type="checkbox" checked="true"  id="pagehelperStatus" name="pagehelperStatus"  />&nbsp;&nbsp;
-                    Dto:<input type="checkbox"   id="dtoStatus" name="dtoStatus"   />&nbsp;&nbsp;
-                    xml inserts:<input type="checkbox"   id="insertsStatus" name="insertsStatus"   />&nbsp;&nbsp;
+                    swagger:<input type="checkbox" checked="true"  id="swaggerStatus" name="swaggerStatus" title="使用swagger自动生产接口文档"  />&nbsp;
+                    pagehelper:<input type="checkbox" checked="true"  id="pagehelperStatus" name="pagehelperStatus" title="使用springboot 对应的pageHelper 分页工具"  />&nbsp;&nbsp;
+                    Dto:<input type="checkbox"   id="dtoStatus" name="dtoStatus"  title="生成xxxDto 类"  />&nbsp;&nbsp;
+                    MapperXml-inserts:<input type="checkbox"   id="insertsStatus" name="insertsStatus" title="生成MapperXml insert 语句"  />&nbsp;&nbsp
+                    MapperXml-Alias: <input type="checkbox" checked="true"  id="mapperXmlAliasStatus" name="mapperXmlAliasStatus" title="true代表mapper xml ResultMap type字段使用mybatis Alias别名，false 代表mapper xml ResultMap type字段全路径 " />&nbsp;&nbsp;
 
                 </div>
                 <div style="float: left;display: inline;width: 100%;text-align: left;padding: 3px;">

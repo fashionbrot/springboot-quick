@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.ibatis.type.Alias;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -379,7 +380,7 @@ public class QuickService {
         map.put("package",req.getPackageOut());
 
         map.put("pagehelperStatus","on".equals(req.getPagehelperStatus()));
-
+        map.put("mapperXmlAliasStatus","on".equals(req.getMapperXmlAliasStatus()));
         if (StringUtils.isNotEmpty(req.getReqOut())) {
             map.put("reqOut", decode(req.getReqOut()));
         }
@@ -477,7 +478,8 @@ public class QuickService {
         Map<String, Object> map = new HashMap<>();
         map.put("out",req.getOut());
         map.put("package",req.getPackageOut());
-
+        map.put("pagehelperStatus","on".equals(req.getPagehelperStatus()));
+        map.put("mapperXmlAliasStatus","on".equals(req.getMapperXmlAliasStatus()));
         if (StringUtils.isNotEmpty(req.getReqOut())) {
             map.put("reqOut", decode(req.getReqOut()));
         }
