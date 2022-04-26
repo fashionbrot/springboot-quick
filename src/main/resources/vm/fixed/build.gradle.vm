@@ -89,6 +89,9 @@ dependencies {
     implementation "org.tinylog:jcl-tinylog:${tinylog_version}"
     implementation "org.tinylog:log4j1.2-api:${tinylog_version}"
 
+    #if (${pagehelperStatus})
+    implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.4.1'
+    #end
 }
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"

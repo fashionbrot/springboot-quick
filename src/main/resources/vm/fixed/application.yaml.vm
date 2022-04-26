@@ -29,4 +29,10 @@ mybatis-plus:
   mapper-locations: classpath*:com/gitee/fashionbrot/mapper/xml/*.xml
   type-aliases-package: com.gitee.fashionbrot.entity
 
-
+#if (${pagehelperStatus})
+pagehelper:
+  helper-dialect: mysql
+  params: count=countSql
+  reasonable: true
+  support-methods-arguments: false
+#end

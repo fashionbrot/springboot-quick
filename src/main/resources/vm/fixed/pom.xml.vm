@@ -82,8 +82,13 @@
             <scope>provided</scope>
         </dependency>
 
-
-
+        #if (${pagehelperStatus})
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+        #end
         <dependency>
             <groupId>org.tinylog</groupId>
             <artifactId>tinylog-api</artifactId>

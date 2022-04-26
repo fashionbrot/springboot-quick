@@ -378,6 +378,8 @@ public class QuickService {
         map.put("out",req.getOut());
         map.put("package",req.getPackageOut());
 
+        map.put("pagehelperStatus","on".equals(req.getPagehelperStatus()));
+
         if (StringUtils.isNotEmpty(req.getReqOut())) {
             map.put("reqOut", decode(req.getReqOut()));
         }

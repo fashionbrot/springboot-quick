@@ -38,4 +38,6 @@ public class CodeReq {
     private String fixed;
 
     private String compileType;
+
+    private String pagehelperStatus;
 }
