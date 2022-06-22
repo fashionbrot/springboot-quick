@@ -422,6 +422,7 @@ public class QuickService {
             map.put("commentsDao", tableEntity.getComments());
         }
         map.put("pk", tableEntity.getPrimaryKeyColumnEntity());
+        map.put("pkAttrType",tableEntity.getPrimaryKeyColumnEntity()!=null?tableEntity.getPrimaryKeyColumnEntity().getAttrType():"String");
         map.put("className", tableEntity.getClassName().replace(captureName(req.getExcludePrefix()),""));
         map.put("variableClassName", tableEntity.getVariableClassName());
         map.put("columns", tableEntity.getColumns());

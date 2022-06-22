@@ -88,7 +88,7 @@ public class ${className}Controller  {
     @ApiOperation("根据id查询")
     @PostMapping("/getById")
     @ResponseBody
-    public RespVo<${className}Entity> getById(Long id){
+    public RespVo<${className}Entity> getById(${pkAttrType} id){
         return RespVo.success(${classServiceImpl}Service.getById(id));
     }
 
@@ -116,7 +116,7 @@ public class ${className}Controller  {
     @ApiOperation("根据id删除")
     @PostMapping("/deleteById")
     @ResponseBody
-    public RespVo deleteById(Long id){
+    public RespVo deleteById(${pkAttrType} id){
         ${classServiceImpl}Service.removeById(id);
         return RespVo.success();
     }
@@ -126,7 +126,7 @@ public class ${className}Controller  {
     @ApiOperation("批量删除")
     @PostMapping("/deleteByIds")
     @ResponseBody
-    public RespVo deleteByIds(Long[] ids){
+    public RespVo deleteByIds(${pkAttrType}[] ids){
         ${classServiceImpl}Service.removeByIds(Arrays.asList(ids));
         return RespVo.success();
     }
